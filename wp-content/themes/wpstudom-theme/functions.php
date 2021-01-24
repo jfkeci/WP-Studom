@@ -11,6 +11,7 @@ if (!function_exists('inicijaliziraj_temu'))
         add_theme_support('post-thumbnails');
         add_theme_support('title-tag');
         add_theme_support('custom-logo');
+        add_post_type_support( 'page', 'excerpt' );
 
         register_nav_menus(array(
             'glavni-menu' => "Glavni navigacijski izbornik",
@@ -1087,7 +1088,9 @@ function GetNumOsoblje($n)
     );
 
     $sThumbnailOsoblje = "";
+    $sOsobljeRadnoMjesto="";
     $lOsoblje = get_posts($args);
+    
 
     foreach ($lOsoblje as $clan)
     {
@@ -1104,16 +1107,34 @@ function GetNumOsoblje($n)
                 $sThumbnailOsoblje = get_template_directory_uri() . '/images/profile.png';
             }
 
+            $lMjestaRada = wp_get_post_terms($clan->ID, 'mjesto_rada');
+            foreach ($lMjestaRada as $mjesta_rada)
+            {
+                $sOsobljeRadnoMjesto = $mjesta_rada->name;
+            }
+
             $sUrl = get_permalink($clan->ID);
             $sOsobljeNaziv = $clan->post_title;
+            
 
-            $sHtml .= '<div class="box person">
-                            <div class="image round"></a>
-                                <img href="' . $sUrl . '" src="' . $sThumbnailOsoblje . '" alt="' . $sOsobljeNaziv . ' Slika" />
+            $sHtml .= '<div class="col-lg-3 col-md-6">
+                            <div class="team-item">
+                                <div class="team-img">
+                                    <img href="' . $sUrl . '" src="' . $sThumbnailOsoblje . '" alt="' . $sOsobljeNaziv . '">
+                                </div>
+                                <div class="team-text">
+                                    <a href="' . $sUrl . '" class=""><h2>' . $sOsobljeNaziv . '</h2></a>
+                                    <h3>' . $sOsobljeRadnoMjesto . '</h3>
+                                    <div class="team-social">
+                                        <!-- <a class="social-tw" href=""><i class="fab fa-twitter"></i></a>
+                                        <a class="social-fb" href=""><i class="fab fa-facebook-f"></i></a>
+                                        <a class="social-li" href=""><i class="fab fa-linkedin-in"></i></a>
+                                        <a class="social-in" href=""><i class="fab fa-instagram"></i></a> -->
+                                    </div>
+                                </div>
                             </div>
-                            <a href="' . $sUrl . '" class=""><h3>' . $sOsobljeNaziv . '</h3></a>
-                            <!--<p>Cipdum dolor</p>-->
                         </div>';
+        
             $counter += 1;
 
         }
@@ -1193,34 +1214,40 @@ function GetNumSadrzaj($n)
         'post_status' => 'publish'
     );
 
-    $sThumbnailOsoblje = "";
-    $lOsoblje = get_posts($args);
+    $sThumbnailSadrzaj = "";
+    $lSadrzaj = get_posts($args);
 
-    foreach ($lOsoblje as $clan)
+    foreach ($lSadrzaj as $sadrzaj)
     {
 
         if ($counter < $n)
         {
 
-            if (get_the_post_thumbnail_url($clan->ID))
+            if (get_the_post_thumbnail_url($sadrzaj->ID))
             {
-                $sThumbnailOsoblje = get_the_post_thumbnail_url($clan->ID);
+                $sThumbnailSadrzaj = get_the_post_thumbnail_url($sadrzaj->ID);
             }
             else
             {
-                $sThumbnailOsoblje = get_template_directory_uri() . '/images/profile.png';
+                $sThumbnailSadrzaj = get_template_directory_uri() . '/images/profile.png';
             }
 
-            $sUrl = get_permalink($clan->ID);
-            $sOsobljeNaziv = $clan->post_title;
+            $sUrl = get_permalink($sadrzaj->ID);
+            $sSadrzajNaziv = $sadrzaj->post_title;
+            $sSadrzaj = $sadrzaj->post_content;
 
-            $sHtml .= '<div class="box person">
-                        <div class="image round"></a>
-						    <img href="' . $sUrl . '" src="' . $sThumbnailOsoblje . '" alt="' . $sOsobljeNaziv . ' Slika" />
-					    </div>
-					    <a href="' . $sUrl . '" class=""><h3>' . $sOsobljeNaziv . '</h3></a>
-                        <p>Cipdum dolor</p>
-                    </div>';
+            $sHtml .= '<div class="col-lg-3 col-md-6">
+                            <div class="team-item">
+                                <div class="team-img">
+                                    <img href="' . $sUrl . '" src="' . $sThumbnailSadrzaj . '" alt="' . $sSadrzajNaziv . '">
+                                </div>
+                                <div class="team-text">
+                                    <a href="' . $sUrl . '" class=""><h2>' . $sSadrzajNaziv . '</h2></a>
+                                    <h3>' . $sSadrzaj . '</h3>
+
+                                </div>
+                            </div>
+                        </div>';
             $counter += 1;
 
         }
@@ -1302,14 +1329,18 @@ function GetNumObavijesti($n)
             $sUrl = get_permalink($result->ID);
             $sResultTitle = $result->post_title;
 
-            $sHtml .= '<article>
-                        <header>
-                            <a href="' . $sUrl . '" class=""><h3>' . $sResultTitle . '</h3></a>
-                        </header>
-                        <footer>
-                            <a href="' . $sUrl . '" class="button special">Više</a>
-                        </footer>
-                    </article>';
+            $sHtml .= '<div class="col-lg-4 col-md-6">
+                            <div class="blog-item">
+                                <!--<img src="img/blog-1.jpg" alt="">-->
+                                <h3>' . $sResultTitle . '</h3>
+                                <div class="meta">
+                                    <i class="fa fa-list-alt"></i>
+                                    <i class="fa fa-calendar-alt"></i>
+                                    <p>'.get_the_date('Y-m-d', $result->ID).'</p>
+                                </div>
+                                <a class="btn" href="' . $sUrl . '">Vidi više</a>
+                            </div>
+                        </div>';
             $counter += 1;
 
         }
@@ -1382,7 +1413,7 @@ function GetNumNovosti($n)
 
     $sResultThumbnail = "";
 
-    $sHtml = '<div class="flex flex-2">';
+    $sHtml = '';
 
     foreach ($oResults as $result)
     {
@@ -1397,23 +1428,16 @@ function GetNumNovosti($n)
             $sUrl = get_permalink($result->ID);
             $sResultTitle = $result->post_title;
 
-            $sHtml .= '<article>  
-                            <header>
+            $sHtml .= '<div class="col-lg-3 col-md-6">
+                            <div class="service-item">
+                                <img src="' . $sResultThumbnail . '" alt="">
                                 <a href="' . $sUrl . '" class=""><h3>' . $sResultTitle . '</h3></a>
-                            </header>
-                            <div class="image fit">
-                                <img style="width:150px;" src="' . $sResultThumbnail . '"/>
+                                <p>
+                                    '. the_excerpt().'
+                                </p>
+                                <a class="btn" href="' . $sUrl . '">Vidi više</a>
                             </div>
-                            <p></p>
-                            <footer>
-                                <a href="' . $sUrl . '" class="button special">Više</a>
-                            </footer>
-                        </article>';
-
-            if ($counter < $rowCounter)
-            {
-                $sHtml .= '</div><div class="flex flex-2">';
-            }
+                        </div>';
 
             $counter += 1;
         }
@@ -1805,35 +1829,43 @@ function DajSobuPoId($id)
     }
 }
 
-//---------------------------------------------------------------------------
-//LOAD STYLES AND JAVASCRIPT
-//---------------------------------------------------------------------------
-function load_stylesheets()
-{
-    wp_register_style('theme-css', get_template_directory_uri() . '/assets/css/main.css', array() , 1, 'all');
-    wp_enqueue_style('theme-css');
-    wp_register_style('select22', get_template_directory_uri() . '/assets/js/select2/select2.min.css');
-    wp_enqueue_style('select22');
 
+
+//UCITAVANJE CSS DATOTEKA
+function UcitajCssTeme()
+{	
+	wp_enqueue_style( 'bootstrap-css', 'https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css' );
+	wp_enqueue_style( 'font-awesome-css', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css' );
+	wp_enqueue_style( 'google-font', 'https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400&display=swap' );
+    wp_enqueue_style( 'glavni-css', get_template_directory_uri() . '/assets/css/style.css' );
+	wp_enqueue_style( 'lightbox-css', get_template_directory_uri() . '/assets/lib/lightbox/css/lightbox.css' );
+    wp_enqueue_style( 'lightbox-min-css', get_template_directory_uri() . '/assets/lib/lightbox/css/lightbox.min.css' );
+	wp_enqueue_style( 'owl-carousel-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.carousel.css' );
+	wp_enqueue_style( 'owl-carousel-min-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.carousel.min.css' );
+	wp_enqueue_style( 'owl-default-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.theme.default.css' );
+	wp_enqueue_style( 'owl-default-min-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.theme.default.min.css' );
+	wp_enqueue_style( 'owl-green-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.theme.green.css' );
+	wp_enqueue_style( 'owl-green-min-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.theme.green.min.css' );
 }
-add_action('wp_enqueue_scripts', 'load_stylesheets');
+add_action( 'wp_enqueue_scripts', 'UcitajCssTeme' );
 
-//load scripts
-function load_js_files()
-{
-    wp_register_script('theme-jquery', get_template_directory_uri() . '/assets/js/jquery.min.js', array() , 1, 1);
-    wp_enqueue_script('theme-jquery');
-    wp_register_script('theme-skel', get_template_directory_uri() . '/assets/js/skel.min.js', array() , 1, 1);
-    wp_enqueue_script('theme-skel');
-    wp_register_script('theme-util', get_template_directory_uri() . '/assets/js/util.js', array() , 1, 1);
-    wp_enqueue_script('theme-util');
-    wp_register_script('theme-main', get_template_directory_uri() . '/assets/js/main.js', array() , 1, 1);
-    wp_enqueue_script('theme-main');
-    wp_register_script('select21', get_template_directory_uri() . '/assets/js/select2/select2.js', array(
-        'jquery'
-    ) , 1, 1);
-    wp_enqueue_script('select21');
-
+//UCITAVANJE JS DATOTEKA
+function UcitajJsTeme()
+{		
+	
+    wp_enqueue_script('easing-jquery-min-js', get_template_directory_uri().'/assets/lib/easing/easing.min.js', true);	
+    wp_enqueue_script('easing-jquery-js', get_template_directory_uri().'/assets/lib/easing/easing.js', true);
+    wp_enqueue_script('jquery-min-js', 'https://code.jquery.com/jquery-3.4.1.min.js', array('jquery'), true);	
+    wp_enqueue_script('bootstrap-jquery-js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js', true);
+    wp_enqueue_script('isotope-jquery-js', get_template_directory_uri().'/assets/lib/isotope/isotope.pkgd.js', true);	
+    wp_enqueue_script('isotope-jquery-min-js', get_template_directory_uri().'/assets/lib/isotope/isotope.pkgd.min.js', true);
+    wp_enqueue_script('lightbox-jquery-min-js', get_template_directory_uri().'/assets/lib/lightbox/js/lightbox.min.js', true);	
+    wp_enqueue_script('lightbox-jquery-js', get_template_directory_uri().'/assets/lib/lightbox/js/lightbox.js', true);	
+    wp_enqueue_script('owl-carousel-js', get_template_directory_uri().'/assets/lib/owlcarousel/owl.carousel.js', true);
+    wp_enqueue_script('owl-carousel-min-js', get_template_directory_uri().'/assets/lib/owlcarousel/owl.carousel.min.js', true);
+	wp_enqueue_style( 'select2', get_template_directory_uri() . '/assets/js/select2/select2.js' );
+	wp_enqueue_script('main-js', get_template_directory_uri().'/assets/js/main.js', true);
 }
+
 add_action('admin_enqueue_scripts', 'load_js_files');
 

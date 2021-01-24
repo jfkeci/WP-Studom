@@ -1,7 +1,0 @@
-<?php
-
-/*
-Template Name: Profil
-*/
-
-?>

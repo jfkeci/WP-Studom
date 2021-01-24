@@ -12,16 +12,17 @@ else
 ?>
 
 
-<article>
-	<header>
-		<a class=""><h3><?php echo the_title(); ?></h3></a>
-	</header>
-    <p><?php the_content(); ?></p>
-    
-</article>
-<article>
-    <img style="width:500px; margin-top:80px;" class="" src="<?php echo $sIstaknutaSlika ?>" alt="">
-    <footer>
-        <p>Datum: <?php the_date(); ?></p>
-    </footer>
-</article>
+<div class="col-lg-5 col-md-6">
+    <div class="about-img">
+        <img src="<?php echo $sIstaknutaSlika ?>" alt="">
+    </div>
+</div>
+<div class="col-lg-7 col-md-6">
+    <div class="about-text">
+        <h2><?php echo the_title(); ?></h2>
+        <p>
+            <?php the_content(); ?>
+        </p>
+        <a class="btn" href="">Datum: <?php the_date(); ?></a>
+    </div>
+</div>

@@ -1,13 +1,9 @@
 
 <?php 
 get_header();
-    echo '<section id="three" class="wrapper special">
-				<div class="inner">
-					<header class="align-center">
-						<h2>Studom</h2>
-						<p>VŠMTI</p>
-					</header>
-					<div class="flex flex-2">';
+    echo '<div class="about">
+            <div class="container">
+                <div class="row">';
 
 if ( have_posts() )
 {
@@ -20,11 +16,9 @@ if ( have_posts() )
     }
 }
 
-echo '</article>
+echo '</div>
 </div>
-</div>
-</section>
-';
+</div>';
 
 get_footer(); 
 ?>

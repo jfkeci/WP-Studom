@@ -156,7 +156,7 @@ get_header();
                             </p>
                         </div>
                         <div class="col-md-3">
-                            <a class="btn" href="https://vsmti.hr/">Ovdje</a>
+                            <a class="btn" href="https://vsmti.hr/">Vidi</a>
                         </div>
                     </div>
                 </div>

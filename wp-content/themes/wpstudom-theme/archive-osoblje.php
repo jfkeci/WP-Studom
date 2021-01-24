@@ -7,8 +7,6 @@
         <meta content="Cleaning Company Website Template" name="keywords">
         <meta content="Cleaning Company Website Template" name="description">
 
-        <?php the_custom_logo(); ?>
-
 		<?php wp_head(); ?>
 
     </head>
@@ -29,15 +27,6 @@
                                 </div>
                                 <div class="topbar-col">
                                     <a href="studom@vsmti.hr"><i class="fa fa-envelope"></i>studom@vsmti.hr</a>
-                                </div>
-                                <div class="topbar-col">
-                                    <div class="topbar-social">
-                                        <a href=""><i class="fab fa-twitter"></i></a>
-                                        <a href=""><i class="fab fa-facebook-f"></i></a>
-                                        <a href=""><i class="fab fa-youtube"></i></a>
-                                        <a href=""><i class="fab fa-instagram"></i></a>
-                                        <a href=""><i class="fab fa-linkedin-in"></i></a>
-                                    </div>
                                 </div>
                             </div>
                             <div class="navbar navbar-expand-lg bg-light navbar-light">
@@ -73,6 +62,74 @@
                             <a class="btn" href="http://localhost/studom">STUDOM</a>
 							<p>Osoblje</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Naša uprava</h2>
+                    </div>
+                    <div class="row">
+
+                    <?php
+
+                    echo DajOsoblje('upravitelj');
+
+                    ?>
+
+                    </div>
+                </div>
+            </div>
+            <div class="team">
+                <div class="container">
+                    <div class="section-header">
+                        <p>Funkcionalnost i red doma</p>
+                        <h2>Naši domari</h2>
+                    </div>
+                    <div class="row">
+
+                    <?php
+                    
+                        echo DajOsoblje('domar');
+
+                    ?>
+
+                    </div>
+                </div>
+            </div>
+            <div class="team">
+                <div class="container">
+                    <div class="section-header">
+                        <p>Čistoća i red doma</p>
+                        <h2>Naše čistaćice</h2>
+                    </div>
+                    <div class="row">
+
+                    <?php
+
+                        echo DajOsoblje('cistacica');
+
+                    ?>
+
+                    </div>
+                </div>
+            </div>
+            <div class="team">
+                <div class="container">
+                    <div class="section-header">
+                        <p>Sigurnost doma</p>
+                        <h2>Naši zaštitart</h2>
+                    </div>
+                    <div class="row">
+
+                    <?php
+
+                        echo DajOsoblje('zastitar');
+
+                    ?>
+
                     </div>
                 </div>
             </div>

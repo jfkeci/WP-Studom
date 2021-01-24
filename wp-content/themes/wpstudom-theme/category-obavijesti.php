@@ -30,15 +30,6 @@
                                 <div class="topbar-col">
                                     <a href="studom@vsmti.hr"><i class="fa fa-envelope"></i>studom@vsmti.hr</a>
                                 </div>
-                                <div class="topbar-col">
-                                    <div class="topbar-social">
-                                        <a href=""><i class="fab fa-twitter"></i></a>
-                                        <a href=""><i class="fab fa-facebook-f"></i></a>
-                                        <a href=""><i class="fab fa-youtube"></i></a>
-                                        <a href=""><i class="fab fa-instagram"></i></a>
-                                        <a href=""><i class="fab fa-linkedin-in"></i></a>
-                                    </div>
-                                </div>
                             </div>
                             <div class="navbar navbar-expand-lg bg-light navbar-light">
                                 <a href="#" class="navbar-brand">MENU</a>
@@ -76,5 +67,32 @@
                     </div>
                 </div>
             </div>
+
+            <div class="feature">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="section-header left">
+                                <p>Obavijesti</p>
+                                <h2>Budite u toku</h2>
+                            </div>
+                            <p>
+                            Studentski dom Virovitica otvoren je 30. kolovoza 2017. godine. Kapacitet Doma, ukupne veličine 2.287,87 m2 je 108 ležajeva. Investitor projekta je Visoka škola za menadžment u turizmu i informatici u Virovitici, a financiranje se temelji na Ugovoru o dodjeli bespovratnih sredstava za projekte financirane iz Europskih strukturnih i investicijskih fondova.
+
+                            Korisnicima Studentskog doma Virovitica smještaj je omogućen u jednokrevetnim i dvokrevetnim sobama. Na raspolaganju su boravak za zajedničko druženje korisnika, informatička učionica te besplatni WiFi u svim prostorijama. Studentski dom Virovitica opremljen je profesionalnim perilicama i sušilicama rublja te uređajima za glačanje.</p>
+                            <a class="btn" href="http://localhost/studom">Studom</a>
+                        </div>
+                        <div class="col-md-7">
+                            <?php
+                
+                            echo GetObavijesti();
+                                                                
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
 
 			<?php get_footer(); ?>

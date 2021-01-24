@@ -32,10 +32,13 @@
             </header>
             <!-- Banner -->
 			<section id="banner">
-				<h1>Studenti</h1>
+				<h1>Osoblje</h1>
             </section>
             
-            the_post();
-
+			<?php
+			
+			
+			
+			?>
 
             <?php get_footer(); ?>

@@ -4,7 +4,7 @@ include 'classes.php';
 //---------------------------------------------------------------------------
 //THEME INIT
 //---------------------------------------------------------------------------
-if (!function_exists('inicijaliziraj_temu'))
+if (!function_exists('initialize_studom_theme'))
 {
     function initialize_studom_theme()
     {
@@ -19,15 +19,34 @@ if (!function_exists('inicijaliziraj_temu'))
         ));
 
         add_theme_support('customize-selective-refresh-widgets');
+
     }
 }
 
 add_action('after_setup_theme', 'initialize_studom_theme');
 
-/* function add_last_nav_item($items) {
-    return $items .= '<a href="http://localhost/wpstudom/student/">Studenti</a>';
+
+/* add_filter( 'wp_nav_menu_items', 'add_logo_nav_menu', 10, 2 );
+function add_logo_nav_menu($items, $args){
+$newitems = '<a title="logo" href="#">LOGO</a>';
+    $newitems .= $items;
+
+return $newitems;
+} */
+
+function wpse156165_menu_add_class( $atts, $item, $args ) {
+    $class = 'nav-item nav-link';
+    $atts['class'] = $class;
+    $atts['item'] = '<a>';
+    return $atts;
 }
-add_filter('wp_nav_menu_items','add_last_nav_item'); */
+add_filter( 'nav_menu_link_attributes', 'wpse156165_menu_add_class', 10, 3 );
+
+function add_last_nav_item($items) {
+    return $items .= '<a class="btn" href="http://localhost/studom">Prijava</a>';
+}
+add_filter('wp_nav_menu_items','add_last_nav_item');
+
 //ADDING ITEMS TO NAV FOR LOGGED IN LOGGED OUT
 //---------------------------------------------------------------------------
 //SIDEBARS
@@ -1066,13 +1085,16 @@ function DajOsoblje($slug)
         }
         $sOsobljeUrl = $clan->guid;
         $sOsobljeNaziv = $clan->post_title;
-        $sHtml .= '<div class="box person">
-                            <div class="image round"></a>
-                                <img href="' . $sOsobljeUrl . '" src="' . $sThumbnailOsoblje . '" alt="' . $sOsobljeNaziv . ' Slika" />
+        $sHtml .= '<div class="col-lg-3 col-md-6">
+                        <div class="team-item">
+                            <div class="team-img">
+                                <img href="' . $sOsobljeUrl . '" src="' . $sThumbnailOsoblje . '" alt="">
                             </div>
-                            <a href="' . $sOsobljeUrl . '" class=""><h3>' . $sOsobljeNaziv . '</h3></a>
-                            <!--<p>Cipdum dolor</p>-->
-                        </div>';
+                            <div class="team-text">
+                                <a href="' . $sOsobljeUrl . '" class=""><h2>' . $sOsobljeNaziv . '</h2></a>
+                            </div>
+                        </div>
+                    </div>';
     }
     return $sHtml;
 }
@@ -1284,26 +1306,21 @@ function GetObavijesti()
 
         $sUrl = get_permalink($result->ID);
         $sResultTitle = $result->post_title;
+        $ResultContent = $result->post_content;
 
-        $sHtml .= '<section id="three" class="wrapper special">
-		            <div class="inner">
-                        <div class="flex flex-2">
-                            <article>
-                                <header>
-                                    <a href="' . $sUrl . '" class=""><h3>' . $sResultTitle . '</h3></a>
-                                </header>
-                                <footer>
-                                    <a href="' . $sUrl . '" class="button special">Više</a>
-                                </footer>
-                            </article>
-                            <article>
-                                <div class="image fit">
-                                    <img style="width:150px;" src="' . $sThumbnailObavijesti . '" alt="" />
-                                </div>
-                            </article>
+        $shortened = shortenContent($ResultContent);
+
+        $sHtml .= '<div class="row align-items-center feature-item">
+                        <div class="col-5">
+                            <img src="' . $sThumbnailObavijesti . '" alt="">
                         </div>
-                    </div>
-                    </section>';
+                        <div class="col-7">
+                            <a href="' . $sUrl . '" class=""><h3>' . $sResultTitle . '</h3></a>
+                            <p>
+                                '.$shortened.' 
+                            </p>
+                        </div>
+                    </div>';
     }
 
     return $sHtml;
@@ -1375,25 +1392,17 @@ function GetNovosti()
         $sUrl = get_permalink($result->ID);
         $sResultTitle = $result->post_title;
 
-        $sHtml .= '<section id="three" class="wrapper special">
-		            <div class="inner">
-                        <div class="flex flex-2">
-                            <article>
-                                <header>
-                                    <a href="' . $sUrl . '" class=""><h3>' . $sResultTitle . '</h3></a>
-                                </header>
-                                <footer>
-                                    <a href="' . $sUrl . '" class="button special">Više</a>
-                                </footer>
-                            </article>
-                            <article>
-                                <div class="image fit">
-                                    <img style="width:150px;" src="' . $sThumbnailNovosti . '" alt="" />
-                                </div>
-                            </article>
+        $sHtml .= '<div class="row align-items-center feature-item">
+                        <div class="col-5">
+                            <img src="' . $sThumbnailNovosti . '" alt="">
                         </div>
-                    </div>
-                    </section>';
+                        <div class="col-7">
+                            <a href="' . $sUrl . '" class=""><h3>' . $sResultTitle . '</h3></a>
+                            <p>
+                               
+                            </p>
+                        </div>
+                    </div>';
     }
 
     return $sHtml;
@@ -1580,37 +1589,42 @@ function SetMyCookie($id)
 function DajStudente()
 {
     $studenti = DajListuStudenata();
-    $sHtml = '<section id="two" class="wrapper style1 special">
-	        	    <div class="inner">
-	        	    	<header>
-	        	    		<h2>Svi Studenti</h2>
-	        	    	</header>
-                        <div class="flex flex-4"> ';
+    $sHtml = '<div class="team">
+                <div class="container">
+                    <div class="section-header">
+                        <p>Team Member</p>
+                        <h2>Meet Our Expert Cleaners</h2>
+                    </div>
+                    <div class="row">';
     $n = 4;
     $counter = 0;
     foreach ($studenti as $student)
     {
         if ($counter < $n)
         {
-            $sHtml .= '<div class="box person">
-                        <div class="image round"></a>
-                            <img href="' . $student->get_student_url() . '" src="' . $student->get_slika_url() . '" alt="' . $student->get_ime_prezime() . ' Slika" />
-                        </div>
-                        <a href="' . $student->get_student_url() . '" class=""><h3>' . $student->get_ime_prezime() . '</h3></a>
-                        <p>' . $student->get_program() . '</p>
-                        <p>Godina: ' . $student->get_godina() . '</p>
-                        <p>Soba: ' . $student->get_student_soba() . '</p>
-                    </div> ';
+            $sHtml .= '<div class="col-lg-3 col-md-6">
+                            <div class="team-item">
+                                <div class="team-img">
+                                    <img href="' . $student->get_student_url() . '" src="' . $student->get_slika_url() . '" alt="">
+                                </div>
+                                <div class="team-text">
+                                    <a href="' . $student->get_student_url() . '" class=""><h2>' . $student->get_ime_prezime() . '</h2></a>
+                                    <h3>' . $student->get_program() . '</h3>
+                                    <p>Godina: ' . $student->get_godina() . '</p>
+                                    <p>Soba: ' . $student->get_student_soba() . '</p>
+                                </div>
+                            </div>
+                        </div>';
             $counter++;
         }
         else
         {
             $sHtml .= '</div>
-                        </div>
-                        </section>
-                        <section id="two" class="wrapper style1 special">
-                        <div class="inner">
-                            <div class="flex flex-4">';
+                    </div>
+                </div>
+                <!--<div class="team">
+                        <div class="container">
+                            <div class="row">-->';
             $n += 4;
         }
 
@@ -1674,44 +1688,27 @@ function DajSobe()
 {
     $lSobe = DajListuSoba();
 
-    $sHtml = '<section id="one" class="wrapper">
-                <div class="inner">
-                    <div class="flex flex-3">';
+    $sHtml = '';
 
-    $n = 3;
-    $counter = 0;
+    $stringYellow = 'background-color:yellow;';
+    $stringRed = 'background-color:red;';
+    $stringGreen = 'background-color:green;';
+    $colorString='';
 
     foreach ($lSobe as $soba)
     {
-        if ($counter < $n)
-        {
-            $sHtml .= '
-                <article>
-                    <!--<div class="image fit">
-		    			<img src="images/pic01.jpg" alt="Pic 01" />
-		    		</div>-->
-		    		<header>
-		    			<h3>' . $soba->get_naslov() . ' - ' . $soba->get_soba_kat() . '</h3>
-		    		</header>
-		    		<p>Tip sobe: ' . $soba->get_tip_sobe() . '</p>
-                    <p>Broj kreveta ' . $soba->get_broj_kreveta() . '</p>
-		    		<footer>
-		    			<a href="' . $soba->get_soba_url() . '" class="button special">Vidi</a>
-		    		</footer>
-		    	</article>
-            ';
-            $counter++;
-        }
-        else
-        {
-            $sHtml .= '</div>
-                        </div>
-                            </section>
-                            <section id="one" class="wrapper">
-                        <div class="inner">
-                    <div class="flex flex-3">';
-            $n += 3;
-        }
+            $sHtml .= '<div class="col-lg-4 col-md-6 col-sm-12 portfolio-item ' . strtolower($soba->get_soba_kat()) . '">
+                            <div class="portfolio-wrap">
+                                <figure>
+                                    <img src="img/portfolio-2.jpg" alt="">
+                                    <a href="' . $soba->get_soba_url() . '" class="link-preview" data-lightbox="portfolio"><i class="fa fa-eye"></i></a>
+                                    <a href="' . $soba->get_soba_url() . '" class="link-details"><i class="fa fa-link"></i></a>
+                                    <a style="'.$stringGreen.'" class="portfolio-title" href="#">' . $soba->get_naslov() . ' - ' . $soba->get_soba_kat() . '</a>
+                                    <p>Tip sobe: ' . $soba->get_tip_sobe() . '</p>
+                                    <p>Broj kreveta ' . $soba->get_broj_kreveta() . '</p>
+                                </figure>
+                            </div>
+                        </div>';
     }
     return $sHtml;
 }
@@ -1828,44 +1825,82 @@ function DajSobuPoId($id)
         }
     }
 }
+function shortenContent($string){
+    $myString=''; 
+    if(strlen($string)<100){
+        $myString = $string;
+    }else{
+        $mystring = substr($string, 0, 100);
+    }
+
+    return $myString;
+    }
+    
+
 
 
 
 //UCITAVANJE CSS DATOTEKA
 function UcitajCssTeme()
 {	
-	wp_enqueue_style( 'bootstrap-css', 'https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css' );
-	wp_enqueue_style( 'font-awesome-css', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css' );
-	wp_enqueue_style( 'google-font', 'https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400&display=swap' );
-    wp_enqueue_style( 'glavni-css', get_template_directory_uri() . '/assets/css/style.css' );
-	wp_enqueue_style( 'lightbox-css', get_template_directory_uri() . '/assets/lib/lightbox/css/lightbox.css' );
-    wp_enqueue_style( 'lightbox-min-css', get_template_directory_uri() . '/assets/lib/lightbox/css/lightbox.min.css' );
-	wp_enqueue_style( 'owl-carousel-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.carousel.css' );
-	wp_enqueue_style( 'owl-carousel-min-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.carousel.min.css' );
-	wp_enqueue_style( 'owl-default-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.theme.default.css' );
-	wp_enqueue_style( 'owl-default-min-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.theme.default.min.css' );
-	wp_enqueue_style( 'owl-green-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.theme.green.css' );
-	wp_enqueue_style( 'owl-green-min-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.theme.green.min.css' );
+    wp_register_style( 'bootstrap-css', 'https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css', array(), 1, 'all');
+    wp_enqueue_style('bootstrap-css');
+    wp_register_style( 'font-awesome-css', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css', array(), 1, 'all');
+    wp_enqueue_style('font-awesome-css');
+    wp_register_style( 'google-font', 'https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400&display=swap', array(), 1, 'all');
+    wp_enqueue_style('google-font');
+    wp_register_style( 'glavni-css', get_template_directory_uri() . '/assets/css/style.css', array(), 1, 'all');
+    wp_enqueue_style('glavni-css');
+    wp_register_style( 'override-css', get_template_directory_uri() . '/style.css', array(), 1, 'all');
+    wp_enqueue_style('override-css');
+    wp_register_style( 'lightbox-css', get_template_directory_uri() . '/assets/lib/lightbox/css/lightbox.css', array(), 1, 'all');
+    wp_enqueue_style('lightbox-css');
+    wp_register_style( 'lightbox-min-css', get_template_directory_uri() . '/assets/lib/lightbox/css/lightbox.min.css', array(), 1, 'all');
+    wp_enqueue_style('lightbox-min-css');
+    wp_register_style( 'owl-carousel-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.carousel.css', array(), 1, 'all');
+    wp_enqueue_style('owl-carousel-css');
+    wp_register_style( 'owl-carousel-min-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.carousel.min.css', array(), 1, 'all');
+    wp_enqueue_style('owl-carousel-min-css');
+    wp_register_style( 'owl-default-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.theme.default.css', array(), 1, 'all');
+    wp_enqueue_style('owl-default-css');
+    wp_register_style( 'owl-default-min-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.theme.default.min.css', array(), 1, 'all');
+    wp_enqueue_style('owl-default-min-css');
+    wp_register_style( 'owl-green-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.theme.green.css', array(), 1, 'all');
+    wp_enqueue_style('owl-green-css');
+    wp_register_style( 'owl-green-min-css', get_template_directory_uri() . '/assets/lib/owlcarousel/assets/owl.theme.green.min.css', array(), 1, 'all');
+    wp_enqueue_style('owl-green-min-css');
 }
 add_action( 'wp_enqueue_scripts', 'UcitajCssTeme' );
 
 //UCITAVANJE JS DATOTEKA
 function UcitajJsTeme()
 {		
-	
-    wp_enqueue_script('easing-jquery-min-js', get_template_directory_uri().'/assets/lib/easing/easing.min.js', true);	
-    wp_enqueue_script('easing-jquery-js', get_template_directory_uri().'/assets/lib/easing/easing.js', true);
-    wp_enqueue_script('jquery-min-js', 'https://code.jquery.com/jquery-3.4.1.min.js', array('jquery'), true);	
-    wp_enqueue_script('bootstrap-jquery-js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js', true);
-    wp_enqueue_script('isotope-jquery-js', get_template_directory_uri().'/assets/lib/isotope/isotope.pkgd.js', true);	
-    wp_enqueue_script('isotope-jquery-min-js', get_template_directory_uri().'/assets/lib/isotope/isotope.pkgd.min.js', true);
-    wp_enqueue_script('lightbox-jquery-min-js', get_template_directory_uri().'/assets/lib/lightbox/js/lightbox.min.js', true);	
-    wp_enqueue_script('lightbox-jquery-js', get_template_directory_uri().'/assets/lib/lightbox/js/lightbox.js', true);	
-    wp_enqueue_script('owl-carousel-js', get_template_directory_uri().'/assets/lib/owlcarousel/owl.carousel.js', true);
-    wp_enqueue_script('owl-carousel-min-js', get_template_directory_uri().'/assets/lib/owlcarousel/owl.carousel.min.js', true);
-	wp_enqueue_style( 'select2', get_template_directory_uri() . '/assets/js/select2/select2.js' );
-	wp_enqueue_script('main-js', get_template_directory_uri().'/assets/js/main.js', true);
+
+    wp_register_script('jquery-min-js', 'https://code.jquery.com/jquery-3.4.1.min.js', array(), 1, 1, 1);	
+    wp_enqueue_script('jquery-min-js');
+    wp_register_script('easing-jquery-min-js', get_template_directory_uri().'/assets/lib/easing/easing.min.js',array() , 1, 1, 1);	
+    wp_enqueue_script('easing-jquery-min-js');
+    wp_register_script('easing-jquery-js', get_template_directory_uri().'/assets/lib/easing/easing.js',array() , 1, 1, 1);
+    wp_enqueue_script('easing-jquery-js');
+    wp_register_script('bootstrap-jquery-js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js',array() , 1, 1, 1);
+    wp_enqueue_script('bootstrap-jquery-js');
+    wp_register_script('isotope-jquery-js', get_template_directory_uri().'/assets/lib/isotope/isotope.pkgd.js',array() , 1, 1, 1);	
+    wp_enqueue_script('isotope-jquery-js');
+    wp_register_script('isotope-jquery-min-js', get_template_directory_uri().'/assets/lib/isotope/isotope.pkgd.min.js',array() , 1, 1, 1);
+    wp_enqueue_script('isotope-jquery-min-js');
+    wp_register_script('lightbox-jquery-min-js', get_template_directory_uri().'/assets/lib/lightbox/js/lightbox.min.js',array() , 1, 1, 1);	
+    wp_enqueue_script('lightbox-jquery-min-js');
+    wp_register_script('lightbox-jquery-js', get_template_directory_uri().'/assets/lib/lightbox/js/lightbox.js',array() , 1, 1, 1);	
+    wp_enqueue_script('lightbox-jquery-js');
+    wp_register_script('owl-carousel-js', get_template_directory_uri().'/assets/lib/owlcarousel/owl.carousel.js',array() , 1, 1, 1);
+    wp_enqueue_script('owl-carousel-js');
+    wp_register_script('owl-carousel-min-js', get_template_directory_uri().'/assets/lib/owlcarousel/owl.carousel.min.js',array() , 1, 1, 1);
+    wp_enqueue_script('owl-carousel-min-js');
+    wp_register_script( 'select2', get_template_directory_uri().'/assets/js/select2/select2.js', array('jquery'), 1, 1, 1);
+    wp_enqueue_script('select2');
+    wp_register_script('main-js', get_template_directory_uri().'/assets/js/main.js',array('jquery') , 1, 1, 1);
+    wp_enqueue_script('main-js');
 }
 
-add_action('admin_enqueue_scripts', 'load_js_files');
+add_action('admin_enqueue_scripts', 'UcitajJsTeme');
 

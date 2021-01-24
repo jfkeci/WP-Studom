@@ -30,15 +30,6 @@
                                 <div class="topbar-col">
                                     <a href="studom@vsmti.hr"><i class="fa fa-envelope"></i>studom@vsmti.hr</a>
                                 </div>
-                                <div class="topbar-col">
-                                    <div class="topbar-social">
-                                        <a href=""><i class="fab fa-twitter"></i></a>
-                                        <a href=""><i class="fab fa-facebook-f"></i></a>
-                                        <a href=""><i class="fab fa-youtube"></i></a>
-                                        <a href=""><i class="fab fa-instagram"></i></a>
-                                        <a href=""><i class="fab fa-linkedin-in"></i></a>
-                                    </div>
-                                </div>
                             </div>
                             <div class="navbar navbar-expand-lg bg-light navbar-light">
                                 <a href="#" class="navbar-brand">MENU</a>
@@ -76,5 +67,33 @@
                     </div>
                 </div>
             </div>
+
+            <div class="portfolio">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Naše sobe</h2>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <ul id="portfolio-flters">
+                                <li data-filter="*" class="filter-active">Sve</li>
+                                <li data-filter=".prizemlje">Prizemlje</li>
+                                <li data-filter=".prvi">Prvi kat</li>
+                                <li data-filter=".drugi">Drugi kat</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row portfolio-container">
+                        
+                        <?php
+                        
+                        echo DajSobe();
+
+                        ?>
+                        
+                    </div>
+                </div>
+            </div>
+
 
 			<?php get_footer(); ?>

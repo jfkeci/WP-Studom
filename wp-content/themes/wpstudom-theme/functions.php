@@ -25,15 +25,6 @@ if (!function_exists('initialize_studom_theme'))
 
 add_action('after_setup_theme', 'initialize_studom_theme');
 
-
-/* add_filter( 'wp_nav_menu_items', 'add_logo_nav_menu', 10, 2 );
-function add_logo_nav_menu($items, $args){
-$newitems = '<a title="logo" href="#">LOGO</a>';
-    $newitems .= $items;
-
-return $newitems;
-} */
-
 function wpse156165_menu_add_class( $atts, $item, $args ) {
     $class = 'nav-item nav-link';
     $atts['class'] = $class;
@@ -43,16 +34,12 @@ function wpse156165_menu_add_class( $atts, $item, $args ) {
 add_filter( 'nav_menu_link_attributes', 'wpse156165_menu_add_class', 10, 3 );
 
 function add_last_nav_item($items) {
-    return $items .= '<a class="btn" href="http://localhost/studom">Prijava</a>';
+    return $items .= '<a class="btn" href="http://localhost/studom/login/">Prijava</a>
+                        <a class="btn" href="http://localhost/studom/registracija/">Registracija</a>';
 }
 add_filter('wp_nav_menu_items','add_last_nav_item');
 
-//ADDING ITEMS TO NAV FOR LOGGED IN LOGGED OUT
-//---------------------------------------------------------------------------
-//SIDEBARS
-//---------------------------------------------------------------------------
-function initialize_my_sidebars()
-{
+function initialize_my_sidebars(){
     register_sidebar(array(
         'name' => "Main sidebar",
         'id' => 'main-sidebar',
@@ -62,7 +49,6 @@ function initialize_my_sidebars()
         'before_title' => '<h3">',
         'after_title' => '</h3>',
     ));
-
     register_sidebar(array(
         'name' => "Footer sidebar 1",
         'id' => 'footer-sidebar1',
@@ -72,7 +58,6 @@ function initialize_my_sidebars()
         'before_title' => '<h4>',
         'after_title' => '</h4>',
     ));
-
     register_sidebar(array(
         'name' => "Footer sidebar 2",
         'id' => 'footer-sidebar2',
@@ -82,7 +67,6 @@ function initialize_my_sidebars()
         'before_title' => '<h4>',
         'after_title' => '</h4>',
     ));
-
     register_sidebar(array(
         'name' => "Footer sidebar 3",
         'id' => 'footer-sidebar3',
@@ -92,7 +76,6 @@ function initialize_my_sidebars()
         'before_title' => '<h4>',
         'after_title' => '</h4>',
     ));
-
     register_sidebar(array(
         'name' => "Footer sidebar 4",
         'id' => 'footer-sidebar4',
@@ -103,232 +86,11 @@ function initialize_my_sidebars()
         'after_title' => '</h4>',
     ));
 }
-add_action('widgets_init', 'initialize_my_sidebars');
 
-//---------------------------------------------------------------------------
-//SOBE
-//---------------------------------------------------------------------------
-function registriraj_sobu_cpt()
-{
-    $labels = array(
-        'name' => _x('Sobe', 'Post Type General Name', 'studom_vt') ,
-        'singular_name' => _x('Soba', 'Post Type Singular Name', 'studom_vt') ,
-        'menu_name' => __('Sobe', 'studom_vt') ,
-        'name_admin_bar' => __('Sobe', 'studom_vt') ,
-        'archives' => __('Sobe arhiva', 'studom_vt') ,
-        'attributes' => __('Atributi', 'studom_vt') ,
-        'parent_item_colon' => __('Roditeljski element', 'studom_vt') ,
-        'all_items' => __('Sve Sobe', 'studom_vt') ,
-        'add_new_item' => __('Dodaj novu Sobu', 'studom_vt') ,
-        'add_new' => __('Dodaj novu', 'studom_vt') ,
-        'new_item' => __('Nova Soba', 'studom_vt') ,
-        'edit_item' => __('Uredi Sobu', 'studom_vt') ,
-        'update_item' => __('Ažuriraj Sobu', 'studom_vt') ,
-        'view_item' => __('Pogledaj Sobu', 'studom_vt') ,
-        'view_items' => __('Pogledaj Sobe', 'studom_vt') ,
-        'search_items' => __('Pretraži Sobe', 'studom_vt') ,
-        'not_found' => __('Nije pronađeno', 'studom_vt') ,
-        'not_found_in_trash' => __('Nije pronađeno u smeću', 'studom_vt') ,
-        'featured_image' => __('Glavna slika', 'studom_vt') ,
-        'set_featured_image' => __('Postavi glavnu sliku', 'studom_vt') ,
-        'remove_featured_image' => __('Ukloni glavnu sliku', 'studom_vt') ,
-        'use_featured_image' => __('Postavi za glavnu sliku', 'studom_vt') ,
-        'insert_into_item' => __('Umentni', 'studom_vt') ,
-        'uploaded_to_this_item' => __('Preneseno', 'studom_vt') ,
-        'items_list' => __('Lista', 'studom_vt') ,
-        'items_list_navigation' => __('Navigacija među sobama', 'studom_vt') ,
-        'filter_items_list' => __('Filtriranje soba', 'studom_vt') ,
-    );
-    $args = array(
-        'label' => __('Soba', 'studom_vt') ,
-        'description' => __('Soba post type', 'studom_vt') ,
-        'labels' => $labels,
-        'supports' => array(
-            'title',
-            'editor',
-            'thumbnail',
-            'revisions'
-        ) ,
-        'hierarchical' => false,
-        'public' => true,
-        'show_ui' => true,
-        'show_in_menu' => true,
-        'menu_position' => 5,
-        'menu_icon' => 'dashicons-groups',
-        'show_in_admin_bar' => true,
-        'show_in_nav_menus' => true,
-        'can_export' => false,
-        'has_archive' => true,
-        'exclude_from_search' => false,
-        'publicly_queryable' => true,
-        'capability_type' => 'page',
-    );
-    register_post_type('soba', $args);
-}
-add_action('init', 'registriraj_sobu_cpt', 0);
+//CPT-OVI STUDENT, SOBA, OSOBLJE, DODATNI SADRŽAJ
 
-//---------------------------------------------------------------------------
-//SOBE TAKSONOMIJE
-//KAT SOBE
-//---------------------------------------------------------------------------
-function registriraj_taksonomiju_kat_sobe()
-{
-    $labels = array(
-        'name' => _x('Katovi ', 'Taxonomy General Name', 'studom_vt') ,
-        'singular_name' => _x('Kat', 'Taxonomy Singular Name', 'studom_vt') ,
-        'menu_name' => __('Katovi', 'studom_vt') ,
-        'all_items' => __('Svi katovi', 'studom_vt') ,
-        'parent_item' => __('Roditeljsko zvanje', 'studom_vt') ,
-        'parent_item_colon' => __('Roditeljsko zvanje', 'studom_vt') ,
-        'new_item_name' => __('Novi kat', 'studom_vt') ,
-        'add_new_item' => __('Dodaj novi kat', 'studom_vt') ,
-        'edit_item' => __('Uredi kat', 'studom_vt') ,
-        'update_item' => __('Ažuiriraj kat', 'studom_vt') ,
-        'view_item' => __('Pogledaj kat', 'studom_vt') ,
-        'separate_items_with_commas' => __('Odvojite katove sa zarezima', 'studom_vt') ,
-        'add_or_remove_items' => __('Dodaj ili ukloni kat', 'studom_vt') ,
-        'choose_from_most_used' => __('Odaberi među najčešće korištenima', 'studom_vt') ,
-        'popular_items' => __('Popularni katovi', 'studom_vt') ,
-        'search_items' => __('Pretraga', 'studom_vt') ,
-        'not_found' => __('Nema rezultata', 'studom_vt') ,
-        'no_terms' => __('Nema katova', 'studom_vt') ,
-        'items_list' => __('Lista katova', 'studom_vt') ,
-        'items_list_navigation' => __('Navigacija', 'studom_vt') ,
-    );
-    $args = array(
-        'labels' => $labels,
-        'hierarchical' => true,
-        'public' => true,
-        'show_ui' => true,
-        'show_admin_column' => true,
-        'show_in_nav_menus' => true,
-        'show_tagcloud' => true,
-    );
-    register_taxonomy('kat', array(
-        'soba'
-    ) , $args);
-}
-add_action('init', 'registriraj_taksonomiju_kat_sobe', 0);
-
-//---------------------------------------------------------------------------
-//SOBE META BOXES
-//Studenti u sobi
-//---------------------------------------------------------------------------
-function add_meta_box_hidden_zauzece()
-{
-    add_meta_box('studom_vsmti_hidden_zauzece', 'Zauzeće', 'html_meta_box_hidden_zauzece', 'soba', 'side');
-}
-function html_meta_box_hidden_zauzece($post)
-{
-    $sHtml = '';
-
-    $hasStudents = false;
-
-    $lStudenti = DajListuStudenata();
-    $lMyStudents = array();
-    $lSoba = DajListuSoba();
-
-    $thisSoba = new oSoba();
-
-    foreach ($lSoba as $soba)
-    {
-        if ($soba->get_soba_post_id() == $post->ID)
-        {
-            $thisSoba = $soba;
-        }
-    }
-
-    foreach ($lStudenti as $student)
-    {
-        if ($student->get_student_soba() == $thisSoba->get_soba_post_id())
-        {
-            array_push($lMyStudents, $student);
-            $hasStudents = true;
-        }
-    }
-
-    if ($hasStudents == true)
-    {
-        $rbr = 1;
-        foreach ($lMyStudents as $student)
-        {
-            $id = $student->get_student_post_id();
-            $sHtml .= '<h4> Student ' . $rbr . ' : <a href="http://localhost/wpstudom/wp-admin/post.php?post=' . $id . '&action=edit"> ' . $student->get_ime_prezime() . '</a> </h4>';
-            $rbr++;
-        }
-    }
-    if ($hasStudents == false)
-    {
-        $sHtml .= '<h4> Soba nema studenata</h4>';
-    }
-
-    echo '<div>
-            <table>
-                    <tr>
-                        ' . $sHtml . '
-                    </tr>
-            </table>
-    </div>';
-}
-add_action('add_meta_boxes', 'add_meta_box_hidden_zauzece');
-
-//---------------------------------------------------------------------------
-//SOBE META BOXES
-//Broj sobe
-//---------------------------------------------------------------------------
-function add_meta_box_broj_sobe()
-{
-    add_meta_box('studom_vsmti_broj_sobe', 'Broj sobe', 'html_meta_box_broj_sobe', 'soba');
-}
-function html_meta_box_broj_sobe($post)
-{
-    wp_nonce_field('spremi_broj_sobe', 'broj_sobe_nounce');
-
-    $broj = get_post_meta($post->ID, 'broj_sobe', true);
-
-    $naslov = get_the_title($post->ID);
-
-    $broj = $naslov;
-
-    echo '<div>
-            <p>Broj sobe se automatski dodjeljuje na temelju samog naziva sobe u prvom gornjem obrascu</p>
-            <table>
-                    <tr>
-                        <td><!--broj--><label for="fake_broj">Broj sobe: </label> </td>
-                        <td><input type="text" id="fake_broj" name="fake_broj" value="' . $broj . '" /> </td>
-                    </tr>
-                    <input type="hidden" type="text" id="broj_sobe" name="broj_sobe" value="' . $broj . '" />
-            </table>
-    </div>';
-}
-function spremi_broj_sobe($post_id)
-{
-    $is_autosave = wp_is_post_autosave($post_id);
-    $is_revision = wp_is_post_revision($post_id);
-
-    $is_valid_nonce_broj = (isset($_POST['broj_sobe_nounce']) && wp_verify_nonce($_POST['broj_sobe_nounce'], basename(__FILE__))) ? 'true' : 'false';
-
-    if ($is_autosave || $is_revision || !$is_valid_nonce_broj)
-    {
-        return;
-    }
-    if (!empty($_POST['broj_sobe']))
-    {
-        update_post_meta($post_id, 'broj_sobe', $_POST['broj_sobe']);
-    }
-    else
-    {
-        delete_post_meta($post_id, 'broj_sobe');
-    }
-}
-add_action('add_meta_boxes', 'add_meta_box_broj_sobe');
-add_action('save_post', 'spremi_broj_sobe');
-
-//---------------------------------------------------------------------------
-//STUDENTI CPT
-//---------------------------------------------------------------------------
-function registriraj_studenta_cpt()
-{
+//CPT STUDENT
+function registriraj_studenta_cpt(){
     $labels = array(
         'name' => _x('Studenti', 'Post Type General Name', 'studom_vt') ,
         'singular_name' => _x('Student', 'Post Type Singular Name', 'studom_vt') ,
@@ -384,14 +146,183 @@ function registriraj_studenta_cpt()
     );
     register_post_type('student', $args);
 }
-add_action('init', 'registriraj_studenta_cpt', 0);
+//CPT SOBA
+function registriraj_sobu_cpt(){
+    $labels = array(
+        'name' => _x('Sobe', 'Post Type General Name', 'studom_vt') ,
+        'singular_name' => _x('Soba', 'Post Type Singular Name', 'studom_vt') ,
+        'menu_name' => __('Sobe', 'studom_vt') ,
+        'name_admin_bar' => __('Sobe', 'studom_vt') ,
+        'archives' => __('Sobe arhiva', 'studom_vt') ,
+        'attributes' => __('Atributi', 'studom_vt') ,
+        'parent_item_colon' => __('Roditeljski element', 'studom_vt') ,
+        'all_items' => __('Sve Sobe', 'studom_vt') ,
+        'add_new_item' => __('Dodaj novu Sobu', 'studom_vt') ,
+        'add_new' => __('Dodaj novu', 'studom_vt') ,
+        'new_item' => __('Nova Soba', 'studom_vt') ,
+        'edit_item' => __('Uredi Sobu', 'studom_vt') ,
+        'update_item' => __('Ažuriraj Sobu', 'studom_vt') ,
+        'view_item' => __('Pogledaj Sobu', 'studom_vt') ,
+        'view_items' => __('Pogledaj Sobe', 'studom_vt') ,
+        'search_items' => __('Pretraži Sobe', 'studom_vt') ,
+        'not_found' => __('Nije pronađeno', 'studom_vt') ,
+        'not_found_in_trash' => __('Nije pronađeno u smeću', 'studom_vt') ,
+        'featured_image' => __('Glavna slika', 'studom_vt') ,
+        'set_featured_image' => __('Postavi glavnu sliku', 'studom_vt') ,
+        'remove_featured_image' => __('Ukloni glavnu sliku', 'studom_vt') ,
+        'use_featured_image' => __('Postavi za glavnu sliku', 'studom_vt') ,
+        'insert_into_item' => __('Umentni', 'studom_vt') ,
+        'uploaded_to_this_item' => __('Preneseno', 'studom_vt') ,
+        'items_list' => __('Lista', 'studom_vt') ,
+        'items_list_navigation' => __('Navigacija među sobama', 'studom_vt') ,
+        'filter_items_list' => __('Filtriranje soba', 'studom_vt') ,
+    );
+    $args = array(
+        'label' => __('Soba', 'studom_vt') ,
+        'description' => __('Soba post type', 'studom_vt') ,
+        'labels' => $labels,
+        'supports' => array(
+            'title',
+            'editor',
+            'thumbnail',
+            'revisions'
+        ) ,
+        'hierarchical' => false,
+        'public' => true,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'menu_position' => 5,
+        'menu_icon' => 'dashicons-groups',
+        'show_in_admin_bar' => true,
+        'show_in_nav_menus' => true,
+        'can_export' => false,
+        'has_archive' => true,
+        'exclude_from_search' => false,
+        'publicly_queryable' => true,
+        'capability_type' => 'page',
+    );
+    register_post_type('soba', $args);
+}
+//CPT OSOBLJE
+function registriraj_osoblje_cpt(){
+    $labels = array(
+        'name' => _x('Osoblje', 'Post Type General Name', 'studom_vt') ,
+        'singular_name' => _x('Osoblje', 'Post Type Singular Name', 'studom_vt') ,
+        'menu_name' => __('Osoblje', 'studom_vt') ,
+        'name_admin_bar' => __('Osoblje', 'studom_vt') ,
+        'archives' => __('Osoblje arhiva', 'studom_vt') ,
+        'attributes' => __('Atributi', 'studom_vt') ,
+        'parent_item_colon' => __('Roditeljski element', 'studom_vt') ,
+        'all_items' => __('Svo Osoblje', 'studom_vt') ,
+        'add_new_item' => __('Dodaj novi član Osoblja', 'studom_vt') ,
+        'add_new' => __('Dodaj novi', 'studom_vt') ,
+        'new_item' => __('Novi član Osoblja', 'studom_vt') ,
+        'edit_item' => __('Uredi Osoblje', 'studom_vt') ,
+        'update_item' => __('Ažuriraj Osoblje', 'studom_vt') ,
+        'view_item' => __('Pogledaj Osoblje', 'studom_vt') ,
+        'view_items' => __('Pogledaj Osoblje', 'studom_vt') ,
+        'search_items' => __('Pretraži Osoblje', 'studom_vt') ,
+        'not_found' => __('Nije pronađeno', 'studom_vt') ,
+        'not_found_in_trash' => __('Nije pronađeno u smeću', 'studom_vt') ,
+        'featured_image' => __('Glavna slika', 'studom_vt') ,
+        'set_featured_image' => __('Postavi glavnu sliku', 'studom_vt') ,
+        'remove_featured_image' => __('Ukloni glavnu sliku', 'studom_vt') ,
+        'use_featured_image' => __('Postavi za glavnu sliku', 'studom_vt') ,
+        'insert_into_item' => __('Umentni', 'studom_vt') ,
+        'uploaded_to_this_item' => __('Preneseno', 'studom_vt') ,
+        'items_list' => __('Lista', 'studom_vt') ,
+        'items_list_navigation' => __('Navigacija među Osobljem', 'studom_vt') ,
+        'filter_items_list' => __('Filtriranje Osoblja', 'studom_vt') ,
+    );
+    $args = array(
+        'label' => __('Osoblje', 'studom_vt') ,
+        'description' => __('Osoblje post type', 'studom_vt') ,
+        'labels' => $labels,
+        'supports' => array(
+            'title',
+            'editor',
+            'thumbnail',
+            'revisions'
+        ) ,
+        'hierarchical' => false,
+        'public' => true,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'menu_position' => 5,
+        'menu_icon' => 'dashicons-groups',
+        'show_in_admin_bar' => true,
+        'show_in_nav_menus' => true,
+        'can_export' => false,
+        'has_archive' => true,
+        'exclude_from_search' => false,
+        'publicly_queryable' => true,
+        'capability_type' => 'page',
+    );
+    register_post_type('osoblje', $args);
+}
+//CPT DODATNI SADRŽAJ
+function registriraj_dodatni_sadrzaj_cpt(){
+    $labels = array(
+        'name' => _x('Dodatni sadržaji', 'Post Type General Name', 'studom_vt') ,
+        'singular_name' => _x('Dodatni sadržaj', 'Post Type Singular Name', 'studom_vt') ,
+        'menu_name' => __('Dodatni sadržaji', 'studom_vt') ,
+        'name_admin_bar' => __('Dodatni sadržaji', 'studom_vt') ,
+        'archives' => __('Dodatni sadržaji arhiva', 'studom_vt') ,
+        'attributes' => __('Atributi', 'studom_vt') ,
+        'parent_item_colon' => __('Roditeljski element', 'studom_vt') ,
+        'all_items' => __('Svi dodatni sadržaji', 'studom_vt') ,
+        'add_new_item' => __('Dodaj novi dodatni sadržaj', 'studom_vt') ,
+        'add_new' => __('Dodaj novi', 'studom_vt') ,
+        'new_item' => __('Novi dodatni sadržaj', 'studom_vt') ,
+        'edit_item' => __('Uredi dodatni sadržaj', 'studom_vt') ,
+        'update_item' => __('Ažuriraj dodatni sadržaj', 'studom_vt') ,
+        'view_item' => __('Pogledaj dodatni sadržaj', 'studom_vt') ,
+        'view_items' => __('Pogledaj dodatne sadržaje', 'studom_vt') ,
+        'search_items' => __('Pretraži dodatne sadržaje', 'studom_vt') ,
+        'not_found' => __('Nije pronađeno', 'studom_vt') ,
+        'not_found_in_trash' => __('Nije pronađeno u smeću', 'studom_vt') ,
+        'featured_image' => __('Glavna slika', 'studom_vt') ,
+        'set_featured_image' => __('Postavi glavnu sliku', 'studom_vt') ,
+        'remove_featured_image' => __('Ukloni glavnu sliku', 'studom_vt') ,
+        'use_featured_image' => __('Postavi za glavnu sliku', 'studom_vt') ,
+        'insert_into_item' => __('Umentni', 'studom_vt') ,
+        'uploaded_to_this_item' => __('Preneseno', 'studom_vt') ,
+        'items_list' => __('Lista', 'studom_vt') ,
+        'items_list_navigation' => __('Navigacija među dodatnim sadržajima', 'studom_vt') ,
+        'filter_items_list' => __('Filtriranje dodatnih sadržaja', 'studom_vt') ,
+    );
+    $args = array(
+        'label' => __('Dodatni sadržaj', 'studom_vt') ,
+        'description' => __('Dodatni sadržaj post type', 'studom_vt') ,
+        'labels' => $labels,
+        'supports' => array(
+            'title',
+            'editor',
+            'thumbnail',
+            'revisions'
+        ) ,
+        'hierarchical' => false,
+        'public' => true,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'menu_position' => 5,
+        'menu_icon' => 'dashicons-groups',
+        'show_in_admin_bar' => true,
+        'show_in_nav_menus' => true,
+        'can_export' => false,
+        'has_archive' => true,
+        'exclude_from_search' => false,
+        'publicly_queryable' => true,
+        'capability_type' => 'page',
+    );
+    register_post_type('dodatni_sadrzaj', $args);
+}
+
 
 //---------------------------------------------------------------------------
-//STUDENTI TAKSONOMIJE
-//studijski programi
+//STUDENTI TAKSONOMIJE I META BOXES
 //---------------------------------------------------------------------------
-function registriraj_taksonomiju_studijski_programi()
-{
+function registriraj_taksonomiju_studijski_programi(){
     $labels = array(
         'name' => _x('Studijski programi', 'Taxonomy General Name', 'studom_vt') ,
         'singular_name' => _x('Studijski program', 'Taxonomy Singular Name', 'studom_vt') ,
@@ -427,15 +358,7 @@ function registriraj_taksonomiju_studijski_programi()
         'student'
     ) , $args);
 }
-add_action('init', 'registriraj_taksonomiju_studijski_programi', 0);
-
-//---------------------------------------------------------------------------
-//STUDENTI TAKSONOMIJE
-//godina studija
-//---------------------------------------------------------------------------
-function registriraj_taksonomiju_godina()
-{
-
+function registriraj_taksonomiju_godina(){
     $labels = array(
         'name' => _x('Godina studija', 'Taxonomy General Name', 'studom_vt') ,
         'singular_name' => _x('Godina studija', 'Taxonomy Singular Name', 'studom_vt') ,
@@ -472,18 +395,10 @@ function registriraj_taksonomiju_godina()
     ) , $args);
 
 }
-add_action('init', 'registriraj_taksonomiju_godina', 0);
-
-//---------------------------------------------------------------------------
-//STUDENTI META BOX
-//osobni podaci
-//---------------------------------------------------------------------------
-function add_meta_box_osobni_podaci_studenta()
-{
+function add_meta_box_osobni_podaci_studenta(){
     add_meta_box('studom_vsmti_student_osobni_podaci', 'Osobni podaci', 'html_meta_box_student_osobni_podaci', 'student');
 }
-function html_meta_box_student_osobni_podaci($post)
-{
+function html_meta_box_student_osobni_podaci($post){
     wp_nonce_field('spremi_osobne_podatke_studenta', 'ime_studenta_nounce');
     wp_nonce_field('spremi_osobne_podatke_studenta', 'prezime_studenta_nounce');
     wp_nonce_field('spremi_osobne_podatke_studenta', 'datum_rodenja_studenta_nounce');
@@ -539,8 +454,7 @@ function html_meta_box_student_osobni_podaci($post)
                 </table>
         </div>';
 }
-function spremi_osobne_podatke_studenta($post_id)
-{
+function spremi_osobne_podatke_studenta($post_id){
     $is_autosave = wp_is_post_autosave($post_id);
     $is_revision = wp_is_post_revision($post_id);
 
@@ -622,15 +536,10 @@ function spremi_osobne_podatke_studenta($post_id)
         delete_post_meta($post_id, 'student_zaporka');
     }
 }
-add_action('add_meta_boxes', 'add_meta_box_osobni_podaci_studenta');
-add_action('save_post', 'spremi_osobne_podatke_studenta');
-
-function add_meta_box_soba_student()
-{
+function add_meta_box_soba_student(){
     add_meta_box('vsmti_studom_soba_student', 'Smjesti studenta u sobu:', 'html_meta_box_soba_student', 'student', 'side');
 }
-function html_meta_box_soba_student($post)
-{
+function html_meta_box_soba_student($post){
     wp_nonce_field('spremi_sobu_studenta', 'soba_student_nonce');
 
     $soba_student = get_post_meta($post->ID, 'soba_student', true);
@@ -672,8 +581,7 @@ function html_meta_box_soba_student($post)
 				</div><br/>
 		</div>';
 }
-function spremi_sobu_studenta($post_id)
-{
+function spremi_sobu_studenta($post_id){
     $is_autosave = wp_is_post_autosave($post_id);
     $is_revision = wp_is_post_revision($post_id);
     $is_valid_nonce_soba_student = (isset($_POST['soba_student_nonce']) && wp_verify_nonce($_POST['soba_student_nonce'], basename(__FILE__))) ? 'true' : 'false';
@@ -684,8 +592,8 @@ function spremi_sobu_studenta($post_id)
     // sobe
     if (!empty($_POST['student_u_sobi']))
     {
-        $aNastavnici = implode(",", $_POST['student_u_sobi']);
-        update_post_meta($post_id, 'soba_student', $aNastavnici);
+        $aSobe = implode(",", $_POST['student_u_sobi']);
+        update_post_meta($post_id, 'soba_student', $aSobe);
     }
     else
     {
@@ -693,78 +601,216 @@ function spremi_sobu_studenta($post_id)
     } //sobe
     
 }
-add_action('add_meta_boxes', 'add_meta_box_soba_student');
-add_action('save_post', 'spremi_sobu_studenta');
 
 //---------------------------------------------------------------------------
-//OSOBLJE
+//SOBE TAKSONOMIJE I META BOXES
 //---------------------------------------------------------------------------
-function registriraj_osoblje_cpt()
-{
+
+//---------------------------------------------------------------------------
+//OSOBLJE TAKSONOMIJE I META BOXES
+//---------------------------------------------------------------------------
+
+
+
+if(isset($_POST['registerEmail'])){
+
+    $ime = $_POST['registerIme'];
+    $prezime = $_POST['registerPrezime'];
+    $ime_prezime = $ime . ' ' . $prezime;
+
+
+    $novi_student = array(
+        'post_author' => $current_user->ID, 
+        'post_type' => 'student',
+        'post_title' => $ime_prezime,
+        'post_content' => 'opis novog studenta',
+        'post_status' => 'publish',
+        'tax_input' => array( 
+            'godine_studija' => '1'
+        ),
+        'meta_input' => array(
+                'ime_studenta'   => $ime,
+                'prezime_studenta' => $prezime
+        )
+    );
+
+    wp_insert_post($novi_student);
+
+
+    $studenti = get_posts($args);
+
+    $student = $studenti[0];
+
+    var_dump($student);
+
+    $termObj  = get_term_by( 'id', '1', 'godine_studija');
+    wp_set_object_terms($student->ID, $termObj, $taxonomy);
+
+    die;
+}
+
+
+
+
+//---------------------------------------------------------------------------
+//SOBE TAKSONOMIJE
+//KAT SOBE
+//---------------------------------------------------------------------------
+function registriraj_taksonomiju_kat_sobe(){
     $labels = array(
-        'name' => _x('Osoblje', 'Post Type General Name', 'studom_vt') ,
-        'singular_name' => _x('Osoblje', 'Post Type Singular Name', 'studom_vt') ,
-        'menu_name' => __('Osoblje', 'studom_vt') ,
-        'name_admin_bar' => __('Osoblje', 'studom_vt') ,
-        'archives' => __('Osoblje arhiva', 'studom_vt') ,
-        'attributes' => __('Atributi', 'studom_vt') ,
-        'parent_item_colon' => __('Roditeljski element', 'studom_vt') ,
-        'all_items' => __('Svo Osoblje', 'studom_vt') ,
-        'add_new_item' => __('Dodaj novi član Osoblja', 'studom_vt') ,
-        'add_new' => __('Dodaj novi', 'studom_vt') ,
-        'new_item' => __('Novi član Osoblja', 'studom_vt') ,
-        'edit_item' => __('Uredi Osoblje', 'studom_vt') ,
-        'update_item' => __('Ažuriraj Osoblje', 'studom_vt') ,
-        'view_item' => __('Pogledaj Osoblje', 'studom_vt') ,
-        'view_items' => __('Pogledaj Osoblje', 'studom_vt') ,
-        'search_items' => __('Pretraži Osoblje', 'studom_vt') ,
-        'not_found' => __('Nije pronađeno', 'studom_vt') ,
-        'not_found_in_trash' => __('Nije pronađeno u smeću', 'studom_vt') ,
-        'featured_image' => __('Glavna slika', 'studom_vt') ,
-        'set_featured_image' => __('Postavi glavnu sliku', 'studom_vt') ,
-        'remove_featured_image' => __('Ukloni glavnu sliku', 'studom_vt') ,
-        'use_featured_image' => __('Postavi za glavnu sliku', 'studom_vt') ,
-        'insert_into_item' => __('Umentni', 'studom_vt') ,
-        'uploaded_to_this_item' => __('Preneseno', 'studom_vt') ,
-        'items_list' => __('Lista', 'studom_vt') ,
-        'items_list_navigation' => __('Navigacija među Osobljem', 'studom_vt') ,
-        'filter_items_list' => __('Filtriranje Osoblja', 'studom_vt') ,
+        'name' => _x('Katovi ', 'Taxonomy General Name', 'studom_vt') ,
+        'singular_name' => _x('Kat', 'Taxonomy Singular Name', 'studom_vt') ,
+        'menu_name' => __('Katovi', 'studom_vt') ,
+        'all_items' => __('Svi katovi', 'studom_vt') ,
+        'parent_item' => __('Roditeljsko zvanje', 'studom_vt') ,
+        'parent_item_colon' => __('Roditeljsko zvanje', 'studom_vt') ,
+        'new_item_name' => __('Novi kat', 'studom_vt') ,
+        'add_new_item' => __('Dodaj novi kat', 'studom_vt') ,
+        'edit_item' => __('Uredi kat', 'studom_vt') ,
+        'update_item' => __('Ažuiriraj kat', 'studom_vt') ,
+        'view_item' => __('Pogledaj kat', 'studom_vt') ,
+        'separate_items_with_commas' => __('Odvojite katove sa zarezima', 'studom_vt') ,
+        'add_or_remove_items' => __('Dodaj ili ukloni kat', 'studom_vt') ,
+        'choose_from_most_used' => __('Odaberi među najčešće korištenima', 'studom_vt') ,
+        'popular_items' => __('Popularni katovi', 'studom_vt') ,
+        'search_items' => __('Pretraga', 'studom_vt') ,
+        'not_found' => __('Nema rezultata', 'studom_vt') ,
+        'no_terms' => __('Nema katova', 'studom_vt') ,
+        'items_list' => __('Lista katova', 'studom_vt') ,
+        'items_list_navigation' => __('Navigacija', 'studom_vt') ,
     );
     $args = array(
-        'label' => __('Osoblje', 'studom_vt') ,
-        'description' => __('Osoblje post type', 'studom_vt') ,
         'labels' => $labels,
-        'supports' => array(
-            'title',
-            'editor',
-            'thumbnail',
-            'revisions'
-        ) ,
-        'hierarchical' => false,
+        'hierarchical' => true,
         'public' => true,
         'show_ui' => true,
-        'show_in_menu' => true,
-        'menu_position' => 5,
-        'menu_icon' => 'dashicons-groups',
-        'show_in_admin_bar' => true,
+        'show_admin_column' => true,
         'show_in_nav_menus' => true,
-        'can_export' => false,
-        'has_archive' => true,
-        'exclude_from_search' => false,
-        'publicly_queryable' => true,
-        'capability_type' => 'page',
+        'show_tagcloud' => true,
     );
-    register_post_type('osoblje', $args);
+    register_taxonomy('kat', array(
+        'soba'
+    ) , $args);
 }
-add_action('init', 'registriraj_osoblje_cpt', 0);
+
+
+//---------------------------------------------------------------------------
+//SOBE META BOXES
+//Studenti u sobi
+//---------------------------------------------------------------------------
+function add_meta_box_hidden_zauzece(){
+    add_meta_box('studom_vsmti_hidden_zauzece', 'Zauzeće', 'html_meta_box_hidden_zauzece', 'soba', 'side');
+}
+function html_meta_box_hidden_zauzece($post)
+{
+    $sHtml = '';
+
+    $hasStudents = false;
+
+    $lStudenti = DajListuStudenata();
+    $lMyStudents = array();
+    $lSoba = DajListuSoba();
+
+    $thisSoba = new oSoba();
+
+    foreach ($lSoba as $soba)
+    {
+        if ($soba->get_soba_post_id() == $post->ID)
+        {
+            $thisSoba = $soba;
+        }
+    }
+
+    foreach ($lStudenti as $student)
+    {
+        if ($student->get_student_soba() == $thisSoba->get_soba_post_id())
+        {
+            array_push($lMyStudents, $student);
+            $hasStudents = true;
+        }
+    }
+
+    if ($hasStudents == true)
+    {
+        $rbr = 1;
+        foreach ($lMyStudents as $student)
+        {
+            $id = $student->get_student_post_id();
+            $sHtml .= '<h4> Student ' . $rbr . ' : <a href="http://localhost/wpstudom/wp-admin/post.php?post=' . $id . '&action=edit"> ' . $student->get_ime_prezime() . '</a> </h4>';
+            $rbr++;
+        }
+    }
+    if ($hasStudents == false)
+    {
+        $sHtml .= '<h4> Soba nema studenata</h4>';
+    }
+
+    echo '<div>
+            <table>
+                    <tr>
+                        ' . $sHtml . '
+                    </tr>
+            </table>
+    </div>';
+}
+
+
+//---------------------------------------------------------------------------
+//SOBE META BOXES
+//Broj sobe
+//---------------------------------------------------------------------------
+function add_meta_box_broj_sobe(){
+    add_meta_box('studom_vsmti_broj_sobe', 'Broj sobe', 'html_meta_box_broj_sobe', 'soba');
+}
+function html_meta_box_broj_sobe($post){
+    wp_nonce_field('spremi_broj_sobe', 'broj_sobe_nounce');
+
+    $broj = get_post_meta($post->ID, 'broj_sobe', true);
+
+    $naslov = get_the_title($post->ID);
+
+    $broj = $naslov;
+
+    echo '<div>
+            <p>Broj sobe se automatski dodjeljuje na temelju samog naziva sobe u prvom gornjem obrascu</p>
+            <table>
+                    <tr>
+                        <td><!--broj--><label for="fake_broj">Broj sobe: </label> </td>
+                        <td><input type="text" id="fake_broj" name="fake_broj" value="' . $broj . '" /> </td>
+                    </tr>
+                    <input type="hidden" type="text" id="broj_sobe" name="broj_sobe" value="' . $broj . '" />
+            </table>
+    </div>';
+}
+function spremi_broj_sobe($post_id){
+    $is_autosave = wp_is_post_autosave($post_id);
+    $is_revision = wp_is_post_revision($post_id);
+
+    $is_valid_nonce_broj = (isset($_POST['broj_sobe_nounce']) && wp_verify_nonce($_POST['broj_sobe_nounce'], basename(__FILE__))) ? 'true' : 'false';
+
+    if ($is_autosave || $is_revision || !$is_valid_nonce_broj)
+    {
+        return;
+    }
+    if (!empty($_POST['broj_sobe']))
+    {
+        update_post_meta($post_id, 'broj_sobe', $_POST['broj_sobe']);
+    }
+    else
+    {
+        delete_post_meta($post_id, 'broj_sobe');
+    }
+}
+
+
+
+
 
 //---------------------------------------------------------------------------
 //OSOBLJE TAKSONOMIJE
 // Mjesto rada
 //---------------------------------------------------------------------------
-function registriraj_taksonomiju_mjesto_rada()
-{
-
+function registriraj_taksonomiju_mjesto_rada(){
     $labels = array(
         'name' => _x('Mjesto Rada', 'Taxonomy General Name', 'studom_vt') ,
         'singular_name' => _x('Mjesto Rada', 'Taxonomy Singular Name', 'studom_vt') ,
@@ -801,18 +847,16 @@ function registriraj_taksonomiju_mjesto_rada()
     ) , $args);
 
 }
-add_action('init', 'registriraj_taksonomiju_mjesto_rada', 0);
+
 
 //---------------------------------------------------------------------------
 //OSOBLJE META BOXES
 // Radno vrijeme
 //---------------------------------------------------------------------------
-function add_meta_box_radno_vrijeme()
-{
+function add_meta_box_radno_vrijeme(){
     add_meta_box('studom_vsmti_osoblje_radno_vrijeme', 'Radno vrijeme', 'html_meta_box_osoblje', 'osoblje');
 }
-function html_meta_box_osoblje($post)
-{
+function html_meta_box_osoblje($post){
     wp_nonce_field('spremi_radno_vrijeme_osoblja', 'radno_vrijeme_od_nounce');
     wp_nonce_field('spremi_radno_vrijeme_osoblja', 'radno_vrijeme_do_nounce');
     wp_nonce_field('spremi_radno_vrijeme_osoblja', 'radni_dani_od_nounce');
@@ -849,8 +893,7 @@ function html_meta_box_osoblje($post)
             </div><br/>
         </div>';
 }
-function spremi_radno_vrijeme_osoblja($post_id)
-{
+function spremi_radno_vrijeme_osoblja($post_id){
     $is_autosave = wp_is_post_autosave($post_id);
     $is_revision = wp_is_post_revision($post_id);
 
@@ -899,19 +942,16 @@ function spremi_radno_vrijeme_osoblja($post_id)
         delete_post_meta($post_id, 'radni_dani_osoblja_do');
     }
 }
-add_action('add_meta_boxes', 'add_meta_box_radno_vrijeme');
-add_action('save_post', 'spremi_radno_vrijeme_osoblja');
+
 
 //---------------------------------------------------------------------------
 //OSOBLJE META BOXES
 // Osobni podaci
 //---------------------------------------------------------------------------
-function add_meta_box_osobni_podaci_osoblja()
-{
+function add_meta_box_osobni_podaci_osoblja(){
     add_meta_box('studom_vsmti_osoblje_osobni_podaci', 'Osobni podaci', 'html_meta_box_osoblje_osobni_podaci', 'osoblje', 'side');
 }
-function html_meta_box_osoblje_osobni_podaci($post)
-{
+function html_meta_box_osoblje_osobni_podaci($post){
     wp_nonce_field('spremi_osobne_podatke_osoblja', 'ime_osoblja_nounce');
     wp_nonce_field('spremi_osobne_podatke_osoblja', 'prezime_osoblja_nounce');
     wp_nonce_field('spremi_osobne_podatke_osoblja', 'datum_rodenja_osoblja_nounce');
@@ -966,8 +1006,7 @@ function html_meta_box_osoblje_osobni_podaci($post)
                 </table>
         </div>';
 }
-function spremi_osobne_podatke_osoblja($post_id)
-{
+function spremi_osobne_podatke_osoblja($post_id){
     $is_autosave = wp_is_post_autosave($post_id);
     $is_revision = wp_is_post_revision($post_id);
 
@@ -1049,8 +1088,7 @@ function spremi_osobne_podatke_osoblja($post_id)
         delete_post_meta($post_id, 'osoblje_zaporka');
     }
 }
-add_action('add_meta_boxes', 'add_meta_box_osobni_podaci_osoblja');
-add_action('save_post', 'spremi_osobne_podatke_osoblja');
+
 
 //---------------------------------------------------------------------------
 //OSOBLJE FUNCTIONS
@@ -1099,432 +1137,10 @@ function DajOsoblje($slug)
     return $sHtml;
 }
 
-function GetNumOsoblje($n)
-{
-    $sHtml = "";
-    $counter = 0;
-    $args = array(
-        'posts_per_page' => - 1,
-        'post_type' => 'osoblje',
-        'post_status' => 'publish'
-    );
-
-    $sThumbnailOsoblje = "";
-    $sOsobljeRadnoMjesto="";
-    $lOsoblje = get_posts($args);
-    
-
-    foreach ($lOsoblje as $clan)
-    {
-
-        if ($counter < $n)
-        {
-
-            if (get_the_post_thumbnail_url($clan->ID))
-            {
-                $sThumbnailOsoblje = get_the_post_thumbnail_url($clan->ID);
-            }
-            else
-            {
-                $sThumbnailOsoblje = get_template_directory_uri() . '/images/profile.png';
-            }
-
-            $lMjestaRada = wp_get_post_terms($clan->ID, 'mjesto_rada');
-            foreach ($lMjestaRada as $mjesta_rada)
-            {
-                $sOsobljeRadnoMjesto = $mjesta_rada->name;
-            }
-
-            $sUrl = get_permalink($clan->ID);
-            $sOsobljeNaziv = $clan->post_title;
-            
-
-            $sHtml .= '<div class="col-lg-3 col-md-6">
-                            <div class="team-item">
-                                <div class="team-img">
-                                    <img href="' . $sUrl . '" src="' . $sThumbnailOsoblje . '" alt="' . $sOsobljeNaziv . '">
-                                </div>
-                                <div class="team-text">
-                                    <a href="' . $sUrl . '" class=""><h2>' . $sOsobljeNaziv . '</h2></a>
-                                    <h3>' . $sOsobljeRadnoMjesto . '</h3>
-                                    <div class="team-social">
-                                        <!-- <a class="social-tw" href=""><i class="fab fa-twitter"></i></a>
-                                        <a class="social-fb" href=""><i class="fab fa-facebook-f"></i></a>
-                                        <a class="social-li" href=""><i class="fab fa-linkedin-in"></i></a>
-                                        <a class="social-in" href=""><i class="fab fa-instagram"></i></a> -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>';
-        
-            $counter += 1;
-
-        }
-    }
-
-    return $sHtml;
-}
-//---------------------------------------------------------------------------
-//DODATNI SADRŽAJ CPT
-//---------------------------------------------------------------------------
-function registriraj_dodatni_sadrzaj_cpt()
-{
-    $labels = array(
-        'name' => _x('Dodatni sadržaji', 'Post Type General Name', 'studom_vt') ,
-        'singular_name' => _x('Dodatni sadržaj', 'Post Type Singular Name', 'studom_vt') ,
-        'menu_name' => __('Dodatni sadržaji', 'studom_vt') ,
-        'name_admin_bar' => __('Dodatni sadržaji', 'studom_vt') ,
-        'archives' => __('Dodatni sadržaji arhiva', 'studom_vt') ,
-        'attributes' => __('Atributi', 'studom_vt') ,
-        'parent_item_colon' => __('Roditeljski element', 'studom_vt') ,
-        'all_items' => __('Svi dodatni sadržaji', 'studom_vt') ,
-        'add_new_item' => __('Dodaj novi dodatni sadržaj', 'studom_vt') ,
-        'add_new' => __('Dodaj novi', 'studom_vt') ,
-        'new_item' => __('Novi dodatni sadržaj', 'studom_vt') ,
-        'edit_item' => __('Uredi dodatni sadržaj', 'studom_vt') ,
-        'update_item' => __('Ažuriraj dodatni sadržaj', 'studom_vt') ,
-        'view_item' => __('Pogledaj dodatni sadržaj', 'studom_vt') ,
-        'view_items' => __('Pogledaj dodatne sadržaje', 'studom_vt') ,
-        'search_items' => __('Pretraži dodatne sadržaje', 'studom_vt') ,
-        'not_found' => __('Nije pronađeno', 'studom_vt') ,
-        'not_found_in_trash' => __('Nije pronađeno u smeću', 'studom_vt') ,
-        'featured_image' => __('Glavna slika', 'studom_vt') ,
-        'set_featured_image' => __('Postavi glavnu sliku', 'studom_vt') ,
-        'remove_featured_image' => __('Ukloni glavnu sliku', 'studom_vt') ,
-        'use_featured_image' => __('Postavi za glavnu sliku', 'studom_vt') ,
-        'insert_into_item' => __('Umentni', 'studom_vt') ,
-        'uploaded_to_this_item' => __('Preneseno', 'studom_vt') ,
-        'items_list' => __('Lista', 'studom_vt') ,
-        'items_list_navigation' => __('Navigacija među dodatnim sadržajima', 'studom_vt') ,
-        'filter_items_list' => __('Filtriranje dodatnih sadržaja', 'studom_vt') ,
-    );
-    $args = array(
-        'label' => __('Dodatni sadržaj', 'studom_vt') ,
-        'description' => __('Dodatni sadržaj post type', 'studom_vt') ,
-        'labels' => $labels,
-        'supports' => array(
-            'title',
-            'editor',
-            'thumbnail',
-            'revisions'
-        ) ,
-        'hierarchical' => false,
-        'public' => true,
-        'show_ui' => true,
-        'show_in_menu' => true,
-        'menu_position' => 5,
-        'menu_icon' => 'dashicons-groups',
-        'show_in_admin_bar' => true,
-        'show_in_nav_menus' => true,
-        'can_export' => false,
-        'has_archive' => true,
-        'exclude_from_search' => false,
-        'publicly_queryable' => true,
-        'capability_type' => 'page',
-    );
-    register_post_type('dodatni_sadrzaj', $args);
-}
-add_action('init', 'registriraj_dodatni_sadrzaj_cpt', 0);
-
-function GetNumSadrzaj($n)
-{
-    $sHtml = "";
-    $counter = 0;
-    $args = array(
-        'posts_per_page' => - 1,
-        'post_type' => 'dodatni_sadrzaj',
-        'post_status' => 'publish'
-    );
-
-    $sThumbnailSadrzaj = "";
-    $lSadrzaj = get_posts($args);
-
-    foreach ($lSadrzaj as $sadrzaj)
-    {
-
-        if ($counter < $n)
-        {
-
-            if (get_the_post_thumbnail_url($sadrzaj->ID))
-            {
-                $sThumbnailSadrzaj = get_the_post_thumbnail_url($sadrzaj->ID);
-            }
-            else
-            {
-                $sThumbnailSadrzaj = get_template_directory_uri() . '/images/profile.png';
-            }
-
-            $sUrl = get_permalink($sadrzaj->ID);
-            $sSadrzajNaziv = $sadrzaj->post_title;
-            $sSadrzaj = $sadrzaj->post_content;
-
-            $sHtml .= '<div class="col-lg-3 col-md-6">
-                            <div class="team-item">
-                                <div class="team-img">
-                                    <img href="' . $sUrl . '" src="' . $sThumbnailSadrzaj . '" alt="' . $sSadrzajNaziv . '">
-                                </div>
-                                <div class="team-text">
-                                    <a href="' . $sUrl . '" class=""><h2>' . $sSadrzajNaziv . '</h2></a>
-                                    <h3>' . $sSadrzaj . '</h3>
-
-                                </div>
-                            </div>
-                        </div>';
-            $counter += 1;
-
-        }
-    }
-
-    return $sHtml;
-}
-
 //---------------------------------------------------------------------------
 //KATEGORIJE: NOVOSTI I OBAVIJESTI
 //---------------------------------------------------------------------------
-function GetObavijesti()
-{
-    $sHtml = "";
-    $args = array(
-        'posts_per_page' => - 1,
-        'category_name' => 'obavijesti'
-    );
 
-    $oResults = get_posts($args);
-    $sThumbnailObavijesti = "";
-
-    foreach ($oResults as $result)
-    {
-
-        if (get_the_post_thumbnail_url($result->ID))
-        {
-            $sThumbnailObavijesti = get_the_post_thumbnail_url($result->ID);
-        }
-        else
-        {
-            $sThumbnailObavijesti = get_template_directory_uri() . '/images/logo.png';
-        }
-
-        $sUrl = get_permalink($result->ID);
-        $sResultTitle = $result->post_title;
-        $ResultContent = $result->post_content;
-
-        $shortened = shortenContent($ResultContent);
-
-        $sHtml .= '<div class="row align-items-center feature-item">
-                        <div class="col-5">
-                            <img src="' . $sThumbnailObavijesti . '" alt="">
-                        </div>
-                        <div class="col-7">
-                            <a href="' . $sUrl . '" class=""><h3>' . $sResultTitle . '</h3></a>
-                            <p>
-                                '.$shortened.' 
-                            </p>
-                        </div>
-                    </div>';
-    }
-
-    return $sHtml;
-}
-
-function GetNumObavijesti($n)
-{
-    $sHtml = "";
-    $counter = 0;
-    $args = array(
-        'posts_per_page' => - 1,
-        'category_name' => 'obavijesti'
-    );
-
-    $oResults = get_posts($args);
-
-    foreach ($oResults as $result)
-    {
-
-        if ($counter < $n)
-        {
-
-            $sUrl = get_permalink($result->ID);
-            $sResultTitle = $result->post_title;
-
-            $sHtml .= '<div class="col-lg-4 col-md-6">
-                            <div class="blog-item">
-                                <!--<img src="img/blog-1.jpg" alt="">-->
-                                <h3>' . $sResultTitle . '</h3>
-                                <div class="meta">
-                                    <i class="fa fa-list-alt"></i>
-                                    <i class="fa fa-calendar-alt"></i>
-                                    <p>'.get_the_date('Y-m-d', $result->ID).'</p>
-                                </div>
-                                <a class="btn" href="' . $sUrl . '">Vidi više</a>
-                            </div>
-                        </div>';
-            $counter += 1;
-
-        }
-    }
-
-    return $sHtml;
-}
-
-function GetNovosti()
-{
-    $sHtml = "";
-    $args = array(
-        'posts_per_page' => - 1,
-        'category_name' => 'novosti'
-    );
-
-    $oResults = get_posts($args);
-    $sThumbnailNovosti = "";
-
-    foreach ($oResults as $result)
-    {
-
-        if (get_the_post_thumbnail_url($result->ID))
-        {
-            $sThumbnailNovosti = get_the_post_thumbnail_url($result->ID);
-        }
-        else
-        {
-            $sThumbnailNovosti = get_template_directory_uri() . '/images/logo.png';
-        }
-
-        $sUrl = get_permalink($result->ID);
-        $sResultTitle = $result->post_title;
-
-        $sHtml .= '<div class="row align-items-center feature-item">
-                        <div class="col-5">
-                            <img src="' . $sThumbnailNovosti . '" alt="">
-                        </div>
-                        <div class="col-7">
-                            <a href="' . $sUrl . '" class=""><h3>' . $sResultTitle . '</h3></a>
-                            <p>
-                               
-                            </p>
-                        </div>
-                    </div>';
-    }
-
-    return $sHtml;
-}
-
-function GetNumNovosti($n)
-{
-    $counter = 0;
-    $rowCounter = $counter / 2;
-
-    $args = array(
-        'posts_per_page' => - 1,
-        'category_name' => 'novosti'
-    );
-
-    $oResults = get_posts($args);
-
-    $sResultThumbnail = "";
-
-    $sHtml = '';
-
-    foreach ($oResults as $result)
-    {
-        $sResultThumbnail = "";
-        if ($counter < $n)
-        {
-            if (get_the_post_thumbnail_url($result->ID))
-            {
-                $sResultThumbnail = get_the_post_thumbnail_url($result->ID);
-            }
-
-            $sUrl = get_permalink($result->ID);
-            $sResultTitle = $result->post_title;
-
-            $sHtml .= '<div class="col-lg-3 col-md-6">
-                            <div class="service-item">
-                                <img src="' . $sResultThumbnail . '" alt="">
-                                <a href="' . $sUrl . '" class=""><h3>' . $sResultTitle . '</h3></a>
-                                <p>
-                                    '. the_excerpt().'
-                                </p>
-                                <a class="btn" href="' . $sUrl . '">Vidi više</a>
-                            </div>
-                        </div>';
-
-            $counter += 1;
-        }
-    }
-    $sHtml .= '</div>';
-    return $sHtml;
-}
-
-function DajListuStudenata()
-{
-    $prog = null;
-    $god = null;
-    $lStudenti = array();
-
-    $args = array(
-        'posts_per_page' => - 1,
-        'post_type' => 'student',
-        'post_status' => 'publish',
-    );
-
-    $studenti = get_posts($args);
-
-    $sThumbnailStudent = '';
-
-    foreach ($studenti as $stud)
-    {
-
-        $soba_studenta = get_post_meta($stud->ID, 'soba_student', true);
-
-        $lGodStudija = wp_get_post_terms($stud->ID, 'godine_studija');
-        foreach ($lGodStudija as $godina)
-        {
-            $god = $godina->name;
-        }
-
-        $lStudProgram = wp_get_post_terms($stud->ID, 'studijski_program');
-        foreach ($lStudProgram as $program)
-        {
-            $prog = $program->name;
-        }
-
-        if (get_the_post_thumbnail_url($stud->ID))
-        {
-            $sThumbnailStudent = get_the_post_thumbnail_url($stud->ID);
-        }
-        else
-        {
-            $sThumbnailStudent = get_template_directory_uri() . '/images/profile.png';
-        }
-
-        $newStudent = new oStudent();
-
-        $newStudent->set_student_post_id($stud->ID);
-        $newStudent->set_student_url($stud->guid);
-        $newStudent->set_slika_url($sThumbnailStudent);
-        $newStudent->set_ime_prezime($stud->post_title);
-        $newStudent->set_opis($stud->post_content);
-        $newStudent->set_ime($stud->ime_studenta);
-        $newStudent->set_prezime($stud->prezime_studenta);
-        $newStudent->set_datum_rodenja($stud->datum_rodenja_studenta);
-        $newStudent->set_adresa($stud->adresa_studenta);
-        $newStudent->set_grad($stud->grad_studenta);
-        $newStudent->set_broj_mobitela($stud->broj_mobitela_studenta);
-        $newStudent->set_email($stud->email_studenta);
-        $newStudent->set_godina($god);
-        $newStudent->set_program($prog);
-        $newStudent->set_ects($stud->ects_bodovi);
-        $newStudent->set_prosjek($stud->prosjek_ocjena);
-        $newStudent->set_jmbag($stud->jmbag);
-        $newStudent->set_student_soba($soba_studenta);
-        $newStudent->set_student_zaporka($stud->student_zaporka);
-
-        array_push($lStudenti, $newStudent);
-
-    }
-
-    return $lStudenti;
-}
 
 function DajStudenteSaSobama()
 {
@@ -1541,6 +1157,7 @@ function DajStudenteSaSobama()
 
     return $lStudentiSaSobama;
 }
+
 function DajStudentaPoId($id)
 {
     $lSviStudenti = DajListuStudenata();
@@ -1553,165 +1170,47 @@ function DajStudentaPoId($id)
         if ($sId == $id)
         {
 
-            $sHtml .= '
-            <section id="three" class="wrapper special">
-		    		<div class="inner">
-                        <div class="flex flex-2">
-
-                            <div class="box person">
-		    					<div class="image round">
-		    						<img src="' . $student->get_slika_url() . '" alt="Person 3" />
-		    					</div>
-		    					<h3>' . $student->get_ime_prezime() . '</h3>
-		    				</div>
-                            <article>
-                                <p>' . $student->get_program() . '</p>
-                                <p>Godina: ' . $student->get_godina() . '</p>
-                                <p>Jmbag: ' . $student->get_jmbag() . '</p>
-                                <p>Grad: ' . $student->get_grad() . '</p>
-                                <p>' . $student->get_opis() . '</p>
-		    				</article>
-
+            $sHtml .= '<div class="col-md-6">
+                            <div class="section-header left">
+                                <p>Student</p>
+                                <table class="table table-bordered">
+                                <thead>
+                                        <tr>
+                                            <th>Godina</th>
+                                            <th>Program</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>' . $student->get_godina() . '</td>
+                                            <td>' . $student->get_program() . '</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-		    		</div>
-                </section>';
-
-        }
-    }
-    return $sHtml;
-}
-
-function SetMyCookie($id)
-{
-    setcookie("osoba", $id, time() + 3600);
-}
-
-function DajStudente()
-{
-    $studenti = DajListuStudenata();
-    $sHtml = '<div class="team">
-                <div class="container">
-                    <div class="section-header">
-                        <p>Team Member</p>
-                        <h2>Meet Our Expert Cleaners</h2>
-                    </div>
-                    <div class="row">';
-    $n = 4;
-    $counter = 0;
-    foreach ($studenti as $student)
-    {
-        if ($counter < $n)
-        {
-            $sHtml .= '<div class="col-lg-3 col-md-6">
+                        <div class="col-lg-3 col-md-6">
                             <div class="team-item">
                                 <div class="team-img">
-                                    <img href="' . $student->get_student_url() . '" src="' . $student->get_slika_url() . '" alt="">
+                                    <img src="' . $student->get_slika_url() . '" alt="">
                                 </div>
                                 <div class="team-text">
-                                    <a href="' . $student->get_student_url() . '" class=""><h2>' . $student->get_ime_prezime() . '</h2></a>
-                                    <h3>' . $student->get_program() . '</h3>
-                                    <p>Godina: ' . $student->get_godina() . '</p>
-                                    <p>Soba: ' . $student->get_student_soba() . '</p>
+                                    <h3>' . $student->get_ime_prezime() . '</h3>
+                                    <p></p>
+                                    <p>Grad: ' . $student->get_grad() . '</p>
+                                    <div class="team-social">
+                                        <a class="social-tw" href=""><i class="fab fa-twitter"></i></a>
+                                        <a class="social-fb" href=""><i class="fab fa-facebook-f"></i></a>
+                                        <a class="social-li" href=""><i class="fab fa-linkedin-in"></i></a>
+                                        <a class="social-in" href=""><i class="fab fa-instagram"></i></a>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>';
-            $counter++;
+                            </div></div></div>';
         }
-        else
-        {
-            $sHtml .= '</div>
-                    </div>
-                </div>
-                <!--<div class="team">
-                        <div class="container">
-                            <div class="row">-->';
-            $n += 4;
-        }
-
-    }
-
-    return $sHtml;
-}
-
-function DajListuSoba()
-{
-    $lSobe = array();
-
-    $args = array(
-        'posts_per_page' => - 1,
-        'post_type' => 'soba',
-        'post_status' => 'publish',
-    );
-
-    $sobe = get_posts($args);
-
-    $sKat='';
-    $sThumbnailSoba = '';
-    foreach ($sobe as $soba)
-    {
-        if (get_the_post_thumbnail_url($soba->ID))
-        {
-            $sThumbnailSoba = get_the_post_thumbnail_url($soba->ID);
-        }
-        else
-        {
-            $sThumbnailSoba = get_template_directory_uri() . '/images/profile.png';
-        }
-
-        $lKat = wp_get_post_terms($soba->ID, 'kat');
-        foreach ($lKat as $kat)
-        {
-            $sKat = $kat->name;
-        }
-
-        $newSoba = new oSoba();
-
-        $newSoba->set_soba_post_id($soba->ID);
-        $newSoba->set_soba_url($soba->guid);
-        $newSoba->set_slika_url($sThumbnailSoba);
-        $newSoba->set_naslov($soba->post_title);
-        $newSoba->set_opis($soba->post_content);
-        $newSoba->set_broj_sobe($soba->broj_sobe);
-        $newSoba->set_soba_kat($sKat);
-        $newSoba->set_tip_sobe($soba->tip_kupaonice);
-        $newSoba->set_broj_kreveta($soba->tip_sobe);
-        $newSoba->set_zauzece(null);
-
-        array_push($lSobe, $newSoba);
-
-    }
-
-    return $lSobe;
-}
-
-function DajSobe()
-{
-    $lSobe = DajListuSoba();
-
-    $sHtml = '';
-
-    $stringYellow = 'background-color:yellow;';
-    $stringRed = 'background-color:red;';
-    $stringGreen = 'background-color:green;';
-    $colorString='';
-
-    foreach ($lSobe as $soba)
-    {
-            $sHtml .= '<div class="col-lg-4 col-md-6 col-sm-12 portfolio-item ' . strtolower($soba->get_soba_kat()) . '">
-                            <div class="portfolio-wrap">
-                                <figure>
-                                    <img src="img/portfolio-2.jpg" alt="">
-                                    <a href="' . $soba->get_soba_url() . '" class="link-preview" data-lightbox="portfolio"><i class="fa fa-eye"></i></a>
-                                    <a href="' . $soba->get_soba_url() . '" class="link-details"><i class="fa fa-link"></i></a>
-                                    <a style="'.$stringGreen.'" class="portfolio-title" href="#">' . $soba->get_naslov() . ' - ' . $soba->get_soba_kat() . '</a>
-                                    <p>Tip sobe: ' . $soba->get_tip_sobe() . '</p>
-                                    <p>Broj kreveta ' . $soba->get_broj_kreveta() . '</p>
-                                </figure>
-                            </div>
-                        </div>';
     }
     return $sHtml;
 }
+
 function DajSobePoKatu($slug)
 {
     $args = array(
@@ -1770,37 +1269,72 @@ function DajSobePoKatu($slug)
     echo $sHtml;
 }
 
-function VidiSobuPoId($id)
-{
-    $soba = DajSobuPoId($id);
+function UpdateRoomContent(){
 
-    $sHtml = '<section id="one" class="wrapper">
-                <div class="inner">
-                    <div class="flex flex-3">
-                        <article>
-                            <!--<div class="image fit">
-                                <img src="images/pic01.jpg" alt="Pic 01" />
-                            </div>-->
-                            <header>
-                                <h3>' . $soba->get_naslov() . ' - ' . $soba->get_soba_kat() . '</h3>
-                            </header>
-                            <p>Tip sobe: ' . $soba->get_tip_sobe() . '</p>
-                            <p>Broj kreveta ' . $soba->get_broj_kreveta() . '</p>
-                        </article>
-                        <article>
-                            <!--<div class="image fit">
-                                <img src="images/pic01.jpg" alt="Pic 01" />
-                            </div>-->
-                            <header>
-                                <h3>Slike</h3>
-                            </header>
+    $lSobe = array();
 
-                        </article>
-                    </div>
-                </div>
-            </section>';
+    $args = array(
+        'posts_per_page' => - 1,
+        'post_type' => 'soba',
+        'post_status' => 'publish'
+    );
 
-    return $sHtml;
+    $sobe = get_posts($args);
+
+    foreach ($sobe as $soba)
+    {
+        $id = $soba->ID;
+        $stringContent = '';
+    
+        if(strtolower($soba->tip_sobe) == 'jednokrevetna'){
+
+            $stringContent = '<p>Jednokrevetna soba s kupaonicom, mini kuhinjom, klimom, mini hladnjakom i TV – om</p>';
+
+            $my_post = array(
+                'post_type' => 'soba',
+                'ID' => $id,
+                'post_content' => $stringContent
+            );
+           
+            wp_update_post( $my_post );
+
+        }
+        if(strtolower($soba->tip_sobe) == 'dvokrevetna'){
+
+            $stringContent = '<p>dvokrevetna soba s kupaonicom, klimom, mini kuhinjom, mini hladnjakom i TV – om</p>';
+
+            $my_post = array(
+                'post_type' => 'soba',
+                'ID' => $id,
+                'post_content' => $stringContent
+            );
+           
+            wp_update_post( $my_post );
+
+        }
+    }
+}
+
+function ProvjeriKapacitetSobe($soba){
+
+
+    $args = array(
+        'posts_per_page' => - 1,
+        'post_type' => 'student',
+        'post_status' => 'publish',
+    );
+
+    $lStudenti = get_posts($args);
+
+
+    $status = 0;
+    foreach($lStudenti as $student){
+        $studentSoba = get_post_meta($student->ID, 'soba_student', true);
+        if($soba->ID == $studentSoba){
+            $status++;
+        }
+    }
+    return $status;
 }
 
 function DajBrojSobePoId($id)
@@ -1834,11 +1368,30 @@ function shortenContent($string){
     }
 
     return $myString;
-    }
+}
     
 
 
-
+add_action('init', 'registriraj_dodatni_sadrzaj_cpt', 0);
+add_action('add_meta_boxes', 'add_meta_box_osobni_podaci_osoblja');
+add_action('save_post', 'spremi_osobne_podatke_osoblja');
+add_action('add_meta_boxes', 'add_meta_box_radno_vrijeme');
+add_action('save_post', 'spremi_radno_vrijeme_osoblja');
+add_action('init', 'registriraj_taksonomiju_mjesto_rada', 0);
+add_action('init', 'registriraj_osoblje_cpt', 0);
+add_action('add_meta_boxes', 'add_meta_box_soba_student');
+add_action('save_post', 'spremi_sobu_studenta');
+add_action('add_meta_boxes', 'add_meta_box_osobni_podaci_studenta');
+add_action('save_post', 'spremi_osobne_podatke_studenta');
+add_action('init', 'registriraj_taksonomiju_godina', 0);
+add_action('init', 'registriraj_taksonomiju_studijski_programi', 0);
+add_action('init', 'registriraj_studenta_cpt', 0);
+add_action('add_meta_boxes', 'add_meta_box_broj_sobe');
+add_action('save_post', 'spremi_broj_sobe');
+add_action('add_meta_boxes', 'add_meta_box_hidden_zauzece');
+add_action('widgets_init', 'initialize_my_sidebars');
+add_action('init', 'registriraj_sobu_cpt', 0);
+add_action('init', 'registriraj_taksonomiju_kat_sobe', 0);
 
 //UCITAVANJE CSS DATOTEKA
 function UcitajCssTeme()
@@ -1876,31 +1429,32 @@ add_action( 'wp_enqueue_scripts', 'UcitajCssTeme' );
 function UcitajJsTeme()
 {		
 
-    wp_register_script('jquery-min-js', 'https://code.jquery.com/jquery-3.4.1.min.js', array(), 1, 1, 1);	
-    wp_enqueue_script('jquery-min-js');
-    wp_register_script('easing-jquery-min-js', get_template_directory_uri().'/assets/lib/easing/easing.min.js',array() , 1, 1, 1);	
-    wp_enqueue_script('easing-jquery-min-js');
-    wp_register_script('easing-jquery-js', get_template_directory_uri().'/assets/lib/easing/easing.js',array() , 1, 1, 1);
-    wp_enqueue_script('easing-jquery-js');
-    wp_register_script('bootstrap-jquery-js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js',array() , 1, 1, 1);
-    wp_enqueue_script('bootstrap-jquery-js');
-    wp_register_script('isotope-jquery-js', get_template_directory_uri().'/assets/lib/isotope/isotope.pkgd.js',array() , 1, 1, 1);	
-    wp_enqueue_script('isotope-jquery-js');
-    wp_register_script('isotope-jquery-min-js', get_template_directory_uri().'/assets/lib/isotope/isotope.pkgd.min.js',array() , 1, 1, 1);
-    wp_enqueue_script('isotope-jquery-min-js');
-    wp_register_script('lightbox-jquery-min-js', get_template_directory_uri().'/assets/lib/lightbox/js/lightbox.min.js',array() , 1, 1, 1);	
-    wp_enqueue_script('lightbox-jquery-min-js');
-    wp_register_script('lightbox-jquery-js', get_template_directory_uri().'/assets/lib/lightbox/js/lightbox.js',array() , 1, 1, 1);	
-    wp_enqueue_script('lightbox-jquery-js');
-    wp_register_script('owl-carousel-js', get_template_directory_uri().'/assets/lib/owlcarousel/owl.carousel.js',array() , 1, 1, 1);
-    wp_enqueue_script('owl-carousel-js');
-    wp_register_script('owl-carousel-min-js', get_template_directory_uri().'/assets/lib/owlcarousel/owl.carousel.min.js',array() , 1, 1, 1);
-    wp_enqueue_script('owl-carousel-min-js');
-    wp_register_script( 'select2', get_template_directory_uri().'/assets/js/select2/select2.js', array('jquery'), 1, 1, 1);
-    wp_enqueue_script('select2');
-    wp_register_script('main-js', get_template_directory_uri().'/assets/js/main.js',array('jquery') , 1, 1, 1);
-    wp_enqueue_script('main-js');
+    wp_enqueue_script('jquery-min-js', 'https://code.jquery.com/jquery-3.4.1.min.js', array('jquery'), true);	
+    //wp_enqueue_script('jquery-min-js');
+    wp_enqueue_script('easing-jquery-min-js', get_template_directory_uri().'/assets/lib/easing/easing.min.js',array('jquery'), true);	
+    //wp_enqueue_script('easing-jquery-min-js');
+    wp_enqueue_script('easing-jquery-js', get_template_directory_uri().'/assets/lib/easing/easing.js',array('jquery'), true);
+    //wp_enqueue_script('easing-jquery-js');
+    wp_enqueue_script('bootstrap-jquery-js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js',array('jquery'), true);
+    //wp_enqueue_script('bootstrap-jquery-js');
+    wp_enqueue_script('isotope-jquery-js', get_template_directory_uri().'/assets/lib/isotope/isotope.pkgd.js',array('jquery'), true);	
+   // wp_enqueue_script('isotope-jquery-js');
+    wp_enqueue_script('isotope-jquery-min-js', get_template_directory_uri().'/assets/lib/isotope/isotope.pkgd.min.js',array('jquery'), true);
+    //wp_enqueue_script('isotope-jquery-min-js');
+    wp_enqueue_script('lightbox-jquery-min-js', get_template_directory_uri().'/assets/lib/lightbox/js/lightbox.min.js',array('jquery'), true);	
+    //wp_enqueue_script('lightbox-jquery-min-js');
+    wp_enqueue_script('lightbox-jquery-js', get_template_directory_uri().'/assets/lib/lightbox/js/lightbox.js',array('jquery'), true);	
+    //wp_enqueue_script('lightbox-jquery-js');
+    wp_enqueue_script('owl-carousel-js', get_template_directory_uri().'/assets/lib/owlcarousel/owl.carousel.js',array('jquery'), true);
+    //wp_enqueue_script('owl-carousel-js');
+    wp_enqueue_script('owl-carousel-min-js', get_template_directory_uri().'/assets/lib/owlcarousel/owl.carousel.min.js',array('jquery'), true);
+    //wp_enqueue_script('owl-carousel-min-js');
+    wp_enqueue_script( 'select2', get_template_directory_uri().'/assets/js/select2/select2.js', array('jquery'), true);
+   // wp_enqueue_script('select2');
+    wp_enqueue_script('main-js', get_template_directory_uri().'/assets/js/main.js',array('jquery') , true);
+    //wp_enqueue_script('main-js');
 }
 
-add_action('admin_enqueue_scripts', 'UcitajJsTeme');
+add_action('wp_enqueue_scripts', 'UcitajJsTeme');
+
 

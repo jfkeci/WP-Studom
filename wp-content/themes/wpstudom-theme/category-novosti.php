@@ -62,7 +62,7 @@
                             <h2><span>Virovitica</span></h2>
                             <p>Visoka škola za menadžment u turizmu  informatici</p>
                             <a class="btn" href="http://localhost/studom">STUDOM</a>
-							<p>Novosti</p>
+							<p>Obavijesti</p>
                         </div>
                     </div>
                 </div>
@@ -85,7 +85,43 @@
                         <div class="col-md-7">
                             <?php
                 
-                            echo GetNovosti();
+                            $sHtml = "";
+                            $args = array(
+                                'posts_per_page' => - 1,
+                                'category_name' => 'novosti'
+                            );
+                        
+                            $oResults = get_posts($args);
+                            $sThumbnailNovosti = "";
+                        
+                            foreach ($oResults as $result)
+                            {
+                            
+                                if (get_the_post_thumbnail_url($result->ID))
+                                {
+                                    $sThumbnailNovosti = get_the_post_thumbnail_url($result->ID);
+                                }
+                                else
+                                {
+                                    $sThumbnailNovosti = get_template_directory_uri() . '/images/logo.png';
+                                }
+                            
+                                $sUrl = get_permalink($result->ID);
+                                $sResultTitle = $result->post_title;
+                            
+                                $sHtml .= '<div class="row align-items-center feature-item">
+                                                <div class="col-5">
+                                                    <img src="' . $sThumbnailNovosti . '" alt="">
+                                                </div>
+                                                <div class="col-7">
+                                                    <a href="' . $sUrl . '" class=""><h3>' . $sResultTitle . '</h3></a>
+                                                    <p>
+
+                                                    </p>
+                                                </div>
+                                            </div>';
+                            }
+                            echo $sHtml;
                                                                 
                             ?>
                         </div>

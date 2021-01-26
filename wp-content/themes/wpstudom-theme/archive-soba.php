@@ -1,18 +1,15 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
         <title><?php the_title(); ?></title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        <meta content="Cleaning Company Website Template" name="keywords">
-        <meta content="Cleaning Company Website Template" name="description">
-
-        <?php the_custom_logo(); ?>
-
-		<?php wp_head(); ?>
-
+        <?php 
+            wp_head();
+         ?>
     </head>
-
     <body>
         <div class="wrapper">
             <div class="header home">
@@ -55,7 +52,6 @@
                             </div>
                         </div>
                     </div>
-                    
                     <div class="hero row align-items-center">
                         <div class="col-md-7">
                             <h2>Studentski dom</h2>
@@ -76,24 +72,87 @@
                     <div class="row">
                         <div class="col-12">
                             <ul id="portfolio-flters">
-                                <li data-filter="*" class="filter-active">Sve</li>
-                                <li data-filter=".prizemlje">Prizemlje</li>
-                                <li data-filter=".prvi">Prvi kat</li>
-                                <li data-filter=".drugi">Drugi kat</li>
+                                <li data-filter="*" >Sve</li>
+                                <li data-filter=".prizemlje" class="filter-active">Prizemlje</li>
+                                <li data-filter=".prvi" >Prvi kat</li>
+                                <li data-filter=".drugi" >Drugi kat</li>
                             </ul>
                         </div>
                     </div>
                     <div class="row portfolio-container">
-                        
-                        <?php
-                        
-                        echo DajSobe();
+                    <?php
+
+                        $lSobe = array();
+
+                        $args = array(
+                            'posts_per_page' => - 1,
+                            'post_type' => 'soba',
+                            'post_status' => 'publish'
+                        );
+                    
+                        $lSobe = get_posts($args);
+                    
+                        $sKat='';
+                        $sThumbnailSoba = '';
+
+                        $sHtml = '';
+
+                        $sImageUrl = get_template_directory_uri().'/images/JednokrevetnaA/thumb.png';
+
+                        $stringYellow = 'background-color:yellow';
+                        $stringRed = 'background-color:red';
+                        $stringGreen = 'background-color:green';
+                        $colorString='';
+
+                        $sKatSobe ='';
+
+                        foreach ($lSobe as $soba)
+                        {
+                            $lKat = wp_get_post_terms($soba->ID, 'kat');
+                            foreach ($lKat as $kat)
+                            {
+                                $sKatSobe = $kat->name;
+                            }
+
+                            $status = ProvjeriKapacitetSobe($soba);
+                            if($status == 0){
+                                $colorString = $stringGreen;
+                            }
+                            
+                            if($status == 1 && strtolower($soba->tip_sobe) == 'jednokrevetna'){
+                                $colorString = $stringRed;
+                            }
+
+                            if($status == 1 && strtolower($soba->tip_sobe) == 'dvokrevetna'){
+                                $colorString = $stringYellow;
+                            }
+                            if($status == 2 && strtolower($soba->tip_sobe) == 'dvokrevetna'){
+                                $colorString = $stringRed;
+                            }
+                            if(strtolower($soba->tip_sobe) == 'jednokrevetna'){
+                                $sImageUrl = get_template_directory_uri().'/images/JednokrevetnaA/thumb.png';
+                            }
+                            if(strtolower($soba->tip_sobe) == 'dvokrevetna'){
+                                $sImageUrl = get_template_directory_uri().'/images/DvokrevetnaA/thumb.png';
+                            }
+                                $sHtml .= '<div class="col-lg-4 col-md-6 col-sm-12 portfolio-item ' . strtolower($sKatSobe) . '">
+                                                <div class="portfolio-wrap">
+                                                    <figure>
+                                                        <img src="'.$sImageUrl.'" alt="">
+                                                        <a href="' . $sImageUrl . '" class="link-preview" data-lightbox="portfolio"><i class="fa fa-eye"></i></a>
+                                                        <a href="' . $soba->guid . '" class="link-details"><i class="fa fa-link"></i></a>
+                                                        <a style="'.$colorString.';" class="portfolio-title" href' . $soba->guid . '">' . $soba->broj_sobe . ' - ' . $sKatSobe . '</a>
+                                                        <p>Tip sobe: ' . $soba->tip_kupaonice . '</p>
+                                                        <p>Broj kreveta ' . $soba->tip_sobe . '</p>
+                                                    </figure>
+                                                </div>
+                                            </div>';
+                        }
+                        echo $sHtml;
 
                         ?>
-                        
+
                     </div>
                 </div>
             </div>
-
-
 			<?php get_footer(); ?>

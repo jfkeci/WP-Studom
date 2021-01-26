@@ -85,7 +85,47 @@
                         <div class="col-md-7">
                             <?php
                 
-                            echo GetObavijesti();
+                            $sHtml = "";
+                            $args = array(
+                                'posts_per_page' => - 1,
+                                'category_name' => 'obavijesti'
+                            );
+                        
+                            $oResults = get_posts($args);
+                            $sThumbnailObavijesti = "";
+                        
+                            foreach ($oResults as $result)
+                            {
+                            
+                                if (get_the_post_thumbnail_url($result->ID))
+                                {
+                                    $sThumbnailObavijesti = get_the_post_thumbnail_url($result->ID);
+                                }
+                                else
+                                {
+                                    $sThumbnailObavijesti = get_template_directory_uri() . '/images/logo.png';
+                                }
+                            
+                                $sUrl = get_permalink($result->ID);
+                                $sResultTitle = $result->post_title;
+                                $ResultContent = $result->post_content;
+                            
+                                $shortened = shortenContent($ResultContent);
+                            
+                                $sHtml .= '<div class="row align-items-center feature-item">
+                                                <div class="col-5">
+                                                    <img src="' . $sThumbnailObavijesti . '" alt="">
+                                                </div>
+                                                <div class="col-7">
+                                                    <a href="' . $sUrl . '" class=""><h3>' . $sResultTitle . '</h3></a>
+                                                    <p>
+                                                        '.$shortened.' 
+                                                    </p>
+                                                </div>
+                                            </div>';
+                            }
+                        
+                            echo $sHtml;
                                                                 
                             ?>
                         </div>

@@ -69,7 +69,94 @@
             </div>
 
             <?php
-            echo DajStudente();
+
+            $sThumbnailStudent = '';
+            $sStudentUrl = '';
+            $sSobaStudenta = '';
+            $sGodinaStudija = '';
+            $sStudijskiProgram = '';
+
+            $n = 4;
+            $counter = 0;
+
+
+            $args = array(
+                'posts_per_page'   => -1,
+                'post_type' => 'student',
+                'post_status' => 'publish'
+            );
+        
+            $studenti = get_posts($args);
+
+            $sHtml = '<div class="team">
+                        <div class="container">
+                            <div class="section-header">
+                                <h2>Naši studenti</h2>
+                            </div>
+                            <div class="row">';
+            
+            foreach ($studenti as $student)
+            {
+
+                $sSobaStudenta = get_post_meta($student->ID, 'soba_student', true);
+
+                $sStudentUrl = $student->guid;
+
+                $lGodStudija = wp_get_post_terms($student->ID, 'godine_studija');
+                foreach ($lGodStudija as $godina)
+                {
+                    $sGodinaStudija = $godina->name;
+                }
+        
+                $lStudProgram = wp_get_post_terms($student->ID, 'studijski_program');
+                foreach ($lStudProgram as $program)
+                {
+                    $sStudijskiProgram = $program->name;
+                }
+        
+                if (get_the_post_thumbnail_url($student->ID))
+                {
+                    $sThumbnailStudent = get_the_post_thumbnail_url($student->ID);
+                }
+                else
+                {
+                    $sThumbnailStudent = get_template_directory_uri() . '/images/profile.png';
+                }
+
+                if ($counter < $n)
+                {
+                    $sHtml .= '<div class="col-lg-3 col-md-6">
+                                    <div class="team-item">
+                                        <div class="team-img">
+                                            <img href="'.$sStudentUrl.'" src="' . $sThumbnailStudent . '" alt="">
+                                        </div>
+                                        <div class="team-text">
+                                            <a href="'.$sStudentUrl.'" class=""><h2>' . $student->post_title . '</h2></a>
+                                            <h3>' . $sStudijskiProgram . '</h3>
+                                            <p>Godina: ' . $sGodinaStudija . '</p>
+                                            <p>Soba: ' . $sSobaStudenta . '</p>
+                                        </div>
+                                    </div>
+                                </div>';
+                    $counter++;
+                }
+                else
+                {
+                        $sHtml .= '</div>
+                            </div>
+                        </div>
+                        <div class="team">
+                        <div class="container">
+
+                            <div class="row">';
+                        $n += 4;
+                    
+                }
+        
+            }
+
+            echo $sHtml.'</div></div>';
+            
             ?>
 
 			<?php get_footer(); ?>

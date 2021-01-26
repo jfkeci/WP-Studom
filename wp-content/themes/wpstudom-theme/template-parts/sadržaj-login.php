@@ -75,80 +75,50 @@ if (isset($_POST["login"]))
     }
 }
 
+
+get_header();
 ?>
 
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-        <?php wp_head(); ?>
-	</head>
-	<body>
-		<header id="header">
-			<div class="inner">
-				<nav id="nav">
-					<?php
-						$menu_args=
-							array(
-								'container' => false,
-								'echo' => false,
-								'items_wrap' => '%3$s',
-								'depth' => 0
-							
-							);
-						
-							echo strip_tags(wp_nav_menu( $menu_args ), '<a>' );
-					?>
-				</nav>
-				<a href="#navPanel" class="navPanelToggle"><span class="fa fa-bars"></span></a>
-			</div>
-        </header>
-        <!-- Banner -->
-		<section id="banner">
-			<h1>Prijava</h1>
-        </section>
-        <section id="three" class="wrapper special">
-			<div class="inner">
-				<header class="align-center">
-					<h2>Dobrodošli</h2>
-				</header>
-				<div class="flex flex-2">
-					<article>
-                        <!-- <div class="image fit">
-							<img src="images/logo.png" alt="Pic 02" />
-						</div> -->
-						<header>
-							<h3>Login</h3>
-						</header>
-                        <span><?php echo $poruka; ?></span>
-                        <form method="post">
-                              <label>Email:</label>
-                              <input type="text" name="user_email" id="user_email" class="MyInput" />
-                           
-                              <label>Lozinka:</label>
-                              <input type="password" name="user_password" id="user_password" class="MyInput" />
-                              <a style="margin-top:10px" href="#" type="submit" name="login" id="login" class="button special">Prijava</a>
-                        </form>
-					</article>
-					<article>
-                        <div class="image fit">
-							<img src="images/pic02.jpg" alt="Pic 02" />
-						</div>
-						<header>
-							<h3>Kontakt</h3>
-						</header>
-						    <p>Studentski dom Virovitica</p>
-						    <p>Matije Gupca 78/4</p>
-						    <p>33000 Virovitica</p>
-						<footer>
-							<p>Telefon: 033 628 817</p>
-							<p>Mail: studom@vsmti.hr</p>
-						</footer>
-					</article>
-				</div>
-			</div>
-		</section>
+<div class="contact">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Prijava</h2>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="section-header left">
+                                <p>VSMTI</p>
+                                <h2>Studentski dom</h2>
+                            </div>
+                            <div>
+                                <p>Studentski dom Virovitica</p>
+						        <p>Matije Gupca 78/4</p>
+						        <p>33000 Virovitica</p>
+                            </div>
+                            <div>
+                                <p>Telefon: 033 628 817</p>
+							    <p>Mail: studom@vsmti.hr</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="contact-form">
+                                <form>
+                                    <div class="form-group">
+                                    <label for="registerEmail">Email</label>
+                    	                <input id="registerEmail" type="email" class="form-control" placeholder="Email" required="required" />
+                    	            </div>
+									<div class="form-group">
+                    	            <div class="form-group">
+                                    <label for="registerZaporka">Zaporka</label>
+                    	                <input  id="registerZaporka" type="password"class="form-control" rows="6" placeholder="Zaporka" required="required" ></input>
+                    	            </div>
+                                    <div><button class="btn" type="submit">Prijava</button></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             
             <?php get_footer(); ?>

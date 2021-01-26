@@ -10,7 +10,7 @@
         }
     });
     $('.back-to-top').click(function () {
-        $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo');
+        $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo'); 
         return false;
     });
     
@@ -62,6 +62,7 @@
     });
 
     $('#portfolio-flters li').on('click', function () {
+        console.log('click');
         $("#portfolio-flters li").removeClass('filter-active');
         $(this).addClass('filter-active');
 

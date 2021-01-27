@@ -2,24 +2,26 @@
 /*
 Template Name: Login
 */
+
 session_start();
 
 
-if(!isset($_SESSION['osoba'])){
-    function add_last_nav_item($items) {
-        return $items .= '<a class="btn" href="http://localhost/studom/login/">Prijava</a>
-                            <a class="btn" href="http://localhost/studom/registracija/">Registracija</a>';
-    }
-    add_filter('wp_nav_menu_items','add_last_nav_item');
-}if(isset($_SESSION['osoba']) && session_id() != ''){
-    function add_last_nav_item($items) {
-        return $items .= '<a class="btn" href="http://localhost/studom/profil/">Profil</a>';
-    }
-    add_filter('wp_nav_menu_items','add_last_nav_item');
-    header('location: http://localhost/studom/profil/');
-}
 
-wp_head();
+if (isset($_POST["loginEmail"]) && isset($_POST["loginZaporka"])){
+
+    $poruka = '';
+    if (empty($_POST["loginEmail"]) || empty($_POST["loginZaporka"])){
+        $poruka = "Morate popuniti oba polja";
+        echo "<script type='text/javascript'>alert('$poruka');</script>";
+    }
+    else{
+        $id=doAction(0, $_POST['loginEmail'], $_POST['loginZaporka'], 'login');
+        if($id != null){
+            $_SESSION['osoba'] = $id;
+            header("location: http://localhost/studom/profil/");
+        }
+    }
+}
 
 ?>
 
@@ -33,9 +35,11 @@ wp_head();
         <?php
 
         wp_head();
+
         
+
         ?>
-        
+
     </head>
     <body>
         <div class="wrapper">
@@ -118,19 +122,19 @@ wp_head();
                         <div class="col-md-6">
                             <div class="contact-form">
                                 <div>
-                                <?php echo $poruka; ?>
                                 </div>
                                 <form method="post">
                                     <div class="form-group">
-                                    <label for="loginEmail">Email</label>
-                    	                <input id="loginEmail" type="email" class="form-control" placeholder="Email" required="required" />
-                    	            </div>
-									<div class="form-group">
+                                        <label for="loginEmail">Email</label>
+                    	                <input id="loginEmail" name="loginEmail" type="email" class="form-control" placeholder="Email" required="required" />
+									</div>
                     	            <div class="form-group">
                                     <label for="loginZaporka">Zaporka</label>
-                    	                <input  id="loginZaporka" type="password"class="form-control" rows="6" placeholder="Zaporka" required="required" ></input>
+                    	                <input  id="loginZaporka" name="loginZaporka" type="password"class="form-control" rows="6" placeholder="Zaporka" required="required" ></input>
                     	            </div>
-                                    <div><button class="btn" type="submit">Prijava</button></div>
+                                    <div>
+                                        <button class="btn" type="submit">Prijava</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>

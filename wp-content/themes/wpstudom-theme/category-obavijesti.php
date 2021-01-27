@@ -7,9 +7,9 @@ if(!isset($_SESSION['osoba'])){
                             <a class="btn" href="http://localhost/studom/registracija/">Registracija</a>';
     }
     add_filter('wp_nav_menu_items','add_last_nav_item');
-}if(isset($_SESSION['osoba']) && session_id() != ''){
+}if(isset($_COOKIE['osoba'])){
     function add_last_nav_item($items) {
-        return $items .= '<a class="btn" href="http://localhost/studom/profil/">Profil</a>';
+        return $items .= '<a class="btn" href="http://localhost/studom/profil/">Profil</a><a class="btn" href="http://localhost/studom/odjava/">Odjava</a>';
     }
     add_filter('wp_nav_menu_items','add_last_nav_item');
 }

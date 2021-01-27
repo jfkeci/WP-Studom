@@ -3,6 +3,7 @@
     
     // Back to top button
     $(window).scroll(function () {
+        
         if ($(this).scrollTop() > 200) {
             $('.back-to-top').fadeIn('slow');
         } else {
@@ -30,6 +31,21 @@
         }
         toggleNavbarMethod();
         $(window).resize(toggleNavbarMethod);
+
+        // Portfolio isotope and filter
+        var portfolioIsotope = $('.portfolio-container').isotope({
+            itemSelector: '.portfolio-item',
+            layoutMode: 'fitRows'
+        });
+
+        $('#portfolio-flters li').on('click', function () {
+            console.log('click');
+            $("#portfolio-flters li").removeClass('filter-active');
+            $(this).addClass('filter-active');
+    
+            portfolioIsotope.isotope({filter: $(this).data('filter')});
+        });
+        
     });
 
 
@@ -54,20 +70,21 @@
         }
     });
     
-    
-    // Portfolio isotope and filter
-    var portfolioIsotope = $('.portfolio-container').isotope({
-        itemSelector: '.portfolio-item',
-        layoutMode: 'fitRows'
-    });
-
-    $('#portfolio-flters li').on('click', function () {
-        console.log('click');
-        $("#portfolio-flters li").removeClass('filter-active');
-        $(this).addClass('filter-active');
-
-        portfolioIsotope.isotope({filter: $(this).data('filter')});
-    });
-    
 })(jQuery);
+
+function SaveNewComment() {
+    let datax = $('.comments:visible').serialize() + "&action_id=save_new_comment";
+    $.ajax({
+        url: 'nekidrugi.php',
+        type: 'POST',
+        data: datax,
+        success: function(oData) {
+        },
+        error: function(XMLHttpRequest, textStatus, exception) {
+            console.log("Ajax failure\n");
+        },
+        async: true
+    });
+}
+
 

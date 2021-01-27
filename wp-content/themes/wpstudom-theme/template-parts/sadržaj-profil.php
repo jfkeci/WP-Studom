@@ -3,7 +3,23 @@
 /*
 Template Name: Profil
 */
+
 session_start();
+
+if(!isset($_SESSION['osoba'])){
+    function add_last_nav_item($items) {
+        return $items .= '<a class="btn" href="http://localhost/studom/login/">Prijava</a>
+                            <a class="btn" href="http://localhost/studom/registracija/">Registracija</a>';
+    }
+    add_filter('wp_nav_menu_items','add_last_nav_item');
+}if(isset($_SESSION['osoba'])){
+    function add_last_nav_item($items) {
+        return $items .= '<a class="btn" href="http://localhost/studom/profil/">Profil</a><a class="btn" href="http://localhost/studom/odjava/">Odjava</a>';
+    }
+    add_filter('wp_nav_menu_items','add_last_nav_item');
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -15,23 +31,8 @@ session_start();
 
         <?php 
         
-        wp_head(); 
-
-        if(!isset($_SESSION['osoba'])){
-            function add_last_nav_item($items) {
-                return $items .= '<a class="btn" href="http://localhost/studom/login/">Prijava</a>
-                                    <a class="btn" href="http://localhost/studom/registracija/">Registracija</a>';
-            }
-            add_filter('wp_nav_menu_items','add_last_nav_item');
-            header('location: http://localhost/studom/login/');
-        }
-        if(isset($_SESSION['osoba']) && session_id() != ''){
-            function add_last_nav_item($items) {
-                return $items .= '<a class="btn" href="http://localhost/studom/profil/">Profil</a>';
-            }
-            add_filter('wp_nav_menu_items','add_last_nav_item');
-        }
         
+        wp_head(); 
         
         ?>
 
@@ -86,13 +87,30 @@ session_start();
                             <h2><span>Virovitica</span></h2>
                             <p>Visoka škola za menadžment u turizmu  informatici</p>
                             <a class="btn" href="http://localhost/studom">STUDOM</a>
+                            <p>Profil korisnika</p>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <?php
+            $id = $_SESSION['osoba'];
+
+            $args = array(
+                'queried_object_id' => $id,
+                'post_type' => 'student',
+                'post_status' => 'publish',
+            );
+        
+            $studenti = get_posts($args);
+
+            foreach($studenti as $student){
+                echo $student->email;
+            }
+            
+            ?>
+
 
 <?php
-echo 'profil korisnika';
 get_footer();
 ?>

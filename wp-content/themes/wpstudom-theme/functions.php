@@ -1,5 +1,22 @@
 <?php
 
+class Komentar{
+    public $komentar_id="N/A";
+    public $user_id="N/A";
+    public $post_id="N/A";
+    public $datum_vrijeme="N/A";
+    public $sadrzaj="N/A";
+
+    public function __construct($kId=null,$uid=null,$pid=null,$dvk=null,$content=null)
+	{
+		if($kId) $this->komentar_id=$kId;
+		if($uid) $this->user_id=$uid;
+		if($pid) $this->post_id=$pid;
+        if($dvk) $this->datum_vrijeme=$dvk;
+        if($content) $this->sadrzaj=$content;
+	}
+}
+
 //---------------------------------------------------------------------------
 //THEME INIT
 //---------------------------------------------------------------------------
@@ -691,6 +708,7 @@ if(isset($_POST['registerEmail'])){
             )
         );
 
+
         wp_insert_post($novi_student);
 
 
@@ -712,103 +730,231 @@ if(isset($_POST['registerEmail'])){
 //---------------------------------------------------------------------------
 //LOGIN STUDENT/OSOBLJE
 //---------------------------------------------------------------------------
-if (isset($_POST["loginEmail"]) && isset($_POST["loginZaporka"])){
 
-$poruka = '';
-$passStatus = 0;
-$userStatus = 0;
 
-$args = array(
-    'posts_per_page' => - 1,
-    'post_type' => 'student',
-    'post_status' => 'publish',
-);
 
-$lStudenti = get_posts($args);
 
-$args = array(
-    'posts_per_page' => - 1,
-    'post_type' => 'osoblje',
-    'post_status' => 'publish'
-);
 
-$lOsoblje = get_posts($args);
+function doAction($uid, $uemail, $upass, $action){
+    $login_id = null;
 
-$zaporka='';
 
-    if (empty($_POST["loginEmail"]) || empty($_POST["loginZaporka"]))
-    {
-        $poruka = "Morate popuniti oba polja";
-        echo "<script type='text/javascript'>alert('$poruka');</script>";
-    }else
-    {
-        foreach($lStudenti as $student){
-            if ($_POST["loginEmail"] == $student->email_studenta)
-            {
-                $userStatus = 1;
-            }
-
-            if(strlen($student->student_zaporka)>2){
-                $zaporka=$student->student_zaporka;
-            }
-
-            if ($_POST["loginZaporka"] == $student->student_zaporka)
-            {
-                $passStatus = 1;
-            }
-            if ($userStatus == 1 && $passStatus == 1)
-            {
-                if($passStatus==1){
-                    $_SESSION['osoba'] = $student->ID;
-                    ini_set('session.gc_maxlifetime', 60*60);
-                    header('location: http://localhost/studom/profil/');
-                    $passStatus = 0;
-                    $userStatus = 0;
-                break;
-                }
-            }
-        }
-        /* foreach($lOsoblje as $clan){
-            if ($_POST["loginEmail"] == $clan->get_email())
-            {
-                $userStatus = 1;
-            }
-            if ($_POST["loginZaporka"] == $clan->student_zaporka)
-            {
-                $passStatus = 1;
-            }
-            if ($userStatus == 1)
-            {
-                if($passStatus==1){
-                    setcookie("osoba", $clan->ID, time() + 3600);
-                    ini_set('session.gc_maxlifetime', 60*60);
-                    header('location:http://localhost/studom/profil/');
-                    $passStatus = 0;
-                    $userStatus = 0;
-                break;
-                }
-            }
-        } */
-        if ($userStatus == 0)
-        {
-            $poruka = "Pogrešan email";
-            echo "<script type='text/javascript'>alert('$poruka');</script>";
-        }
-        if ($passStatus == 0)
-        {
-            $poruka = "Pogrešna zaporka";
-            echo "<script type='text/javascript'>alert('$poruka');</script>";
-        }
-        if ($passStatus == 0 && $userStatus == 0)
-        {
-            $poruka = "Pogrešni podaci";
-            echo "<script type='text/javascript'>alert('$poruka');</script>";
-        }
+    class oOsoba{
+        public $user_id="N/A";
+        public $email="N/A";
+        public $password="N/A";
     }
-    die;
+
+    try
+    {
+    	$oConnection = new PDO("mysql:host=localhost;dbname=wpstudom", 'root', '', array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+    }
+    catch (PDOException $pe)
+    {
+    	die("Could not connect to the database");
+    }
+
+    switch($action){
+        case 'login':
+            $users = array();
+
+            $sQuery = $oConnection->prepare("SELECT * FROM registered_users WHERE user_email = ? AND user_password = ? LIMIT 1");
+            $sQuery->execute(array($uemail,$upass));
+            if($sQuery->rowCount() != 0) {
+                $oRow = $sQuery->fetch(PDO::FETCH_BOTH);
+                $login_id = $oRow['user_id'];
+            }
+            break;
+        case 'register':
+            $users = array();
+            $sQuery = "SELECT * FROM registered_users";
+            while ($oRow = $oRecord->fetch(PDO::FETCH_BOTH))
+            {
+                $oUser=new oOsoba(
+			    	$oRow['user_id'],
+			    	$oRow['user_email'],
+			    	$oRow['user_password']
+			    );
+			    array_push($users, $oUser);
+            }
+            //$successfull = true;
+            break;
+    }
+
+    return $login_id;
 }
 
+function DajPostKomentare($user_id, $post_id){
 
+    //soba id 312
+    //user id 69
+
+    $sKomentarHTML='';
+    $oKomentari = array();
+
+    $commentStatus = 0;
+    
+    $oKomentar = array();
+    
+	try
+    {
+    	$oConnection = new PDO("mysql:host=localhost;dbname=wpstudom", 'root', '', array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+    }
+    catch (PDOException $pe)
+    {
+    	die("Could not connect to the database");
+    }
+
+    $sQuery = "SELECT * FROM user_messages WHERE post_id=" . $post_id;
+	$oRecord = $oConnection->query($sQuery);
+
+	while ($oRow = $oRecord->fetch(PDO::FETCH_BOTH))
+	{
+	    $hasComments = true;
+	    if ($hasComments)
+	    {
+	        $oKomentar = new Komentar($oRow['message_id'], $oRow['user_id'], $oRow['post_id'], $oRow['date_time'], $oRow['content']);
+	        array_push($oKomentari, $oKomentar);
+	        $commentStatus = 1;
+	    }
+    }
+
+    if($commentStatus == 1){
+        $sKomentarHTML = '<table class="tableKomentari table-hover"><thead>
+                                <tr>
+                                    <th>Komentari</th>
+                                    <th></th>
+                                    <th>Objavljeno</th>
+                                </tr>
+                            </thead><tbody>';
+        foreach($oKomentari as  $komentar){
+            if($komentar->user_id == $user_id){
+                
+                $sKomentarHTML .='<tr>
+                                    <td><h4><strong>'.DajUserTitlePoId($komentar->user_id).'</strong>, <br>'.$komentar->sadrzaj.'</h4></td>
+                                    <td></td>
+                                    <td><p>'.$komentar->datum_vrijeme.'</p></td></tr>';
+            }
+        }
+    }else{
+        $sKomentarHTML .= '<br><h4>Nema komentara</h4>';
+    }
+
+    $sKomentarHTML .='</tbody></table><br><div class="contact-form">
+    <div>
+        </div>
+        <form  class="comments" onsubmit="AppendNewComment();SaveNewComment(); return false">
+            <div class="form-group">
+                <label for="postKomentar">Email</label>
+                <input id="postKomentar" name="postKomentar" type="text" class="form-control" placeholder="komentar" required="required" />
+            </div>
+            <input id="postUid" name="postId" value="'.$post_id.'" type="hidden" />
+                <button class="btn" type="submit">Pošalji</button>
+        </form>
+    </div>
+    <script>
+    
+    function AppendNewComment(){
+        var newComment=$("#postKomentar").val();
+        if($("#postKomentar").val()==""){
+
+        }
+        else{
+            var commentstring="<tr>"+
+            "<td><b><br></b>"+newComment+"</td>"+
+            "<td></td>"+
+            "<td>' . DatumVrijeme(3) . '</td>"+
+            "</tr>";
+        $(".tableKomentari tbody").append(commentstring);
+        $("#postKomentar").val("");
+        }
+    }
+    
+    </script>';
+    
+    return $sKomentarHTML;
+
+}
+
+$sActionID="";
+if(isset($_POST['action_id']))
+{
+    try
+    {
+    	$oConnection = new PDO("mysql:host=localhost;dbname=wpstudom", 'root', '', array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+    }
+    catch (PDOException $pe)
+    {
+    	die("Could not connect to the database");
+    }
+
+    $sActionID=$_POST['action_id'];
+    switch ($sActionID) 
+    {
+    case 'add_new_comment':
+        $sQuery = "INSERT INTO user_messages (user_id, post_id, content) VALUES (:user_id, :post_id, :content )";
+		$oStatement = $oConnection->prepare($sQuery);
+		$oData = array(
+		 'user_id' => $_COOKIE["user_id"],
+		 'post_id' => $_POST['post_id'],
+		 'content' => $_POST['content']
+		);
+		try
+		{
+			$oStatement=$oConnection->prepare($sQuery);
+			$oStatement->execute($oData);
+		}
+		catch(PDOException $error)
+		{
+			echo $error;
+		}
+        break;
+    }
+}
+
+function DatumVrijeme($n)
+{
+    $d = strtotime("now");
+    if ($n == 2)
+    {
+        return date("Y-m-d H:i", $d);
+    }
+    if ($n == 3)
+    {
+        return date("Y-m-d H:i:s", $d);
+    }
+}
+
+function DajUserTitlePoId($id){
+    $args = array(
+        'p' => $id,
+        'post_type' => 'student',
+        'post_status' => 'publish'
+    );
+
+    $studenti = get_posts($args);
+
+    $ime_prezime = '';
+    foreach($studenti as $student){
+        $ime_prezime = $student->post_title;
+    }
+    return $ime_prezime;
+}
+function DajUserUrlPoId($id){
+    $args = array(
+        'p' => $id,
+        'post_type' => 'student',
+        'post_status' => 'publish'
+    );
+
+    $studenti = get_posts($args);
+
+    $student_url = '';
+    foreach($studenti as $student){
+        $student_url = $student->guid;
+    }
+    return $student_url;
+}
 
 //---------------------------------------------------------------------------
 //SOBE TAKSONOMIJE
@@ -1555,8 +1701,6 @@ function UcitajJsTeme()
     //wp_enqueue_script('easing-jquery-js');
     wp_enqueue_script('bootstrap-jquery-js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js',array('jquery'), true);
     //wp_enqueue_script('bootstrap-jquery-js');
-    wp_enqueue_script('isotope-jquery-js', get_template_directory_uri().'/assets/lib/isotope/isotope.pkgd.js',array('jquery'), true);	
-   // wp_enqueue_script('isotope-jquery-js');
     wp_enqueue_script('isotope-jquery-min-js', get_template_directory_uri().'/assets/lib/isotope/isotope.pkgd.min.js',array('jquery'), true);
     //wp_enqueue_script('isotope-jquery-min-js');
     wp_enqueue_script('lightbox-jquery-min-js', get_template_directory_uri().'/assets/lib/lightbox/js/lightbox.min.js',array('jquery'), true);	

@@ -1,5 +1,4 @@
 <?php
-include 'classes.php';
 
 //---------------------------------------------------------------------------
 //THEME INIT
@@ -33,11 +32,21 @@ function wpse156165_menu_add_class( $atts, $item, $args ) {
 }
 add_filter( 'nav_menu_link_attributes', 'wpse156165_menu_add_class', 10, 3 );
 
-function add_last_nav_item($items) {
-    return $items .= '<a class="btn" href="http://localhost/studom/login/">Prijava</a>
-                        <a class="btn" href="http://localhost/studom/registracija/">Registracija</a>';
-}
-add_filter('wp_nav_menu_items','add_last_nav_item');
+
+/* if (isset($_COOKIE["osoba"]))
+{
+    function add_last_nav_item($items) {
+        return $items .= '<a class="btn" href="http://localhost/studom/profil/">Profil</a>';
+    }
+    add_filter('wp_nav_menu_items','add_last_nav_item');
+}if (!isset($_COOKIE["osoba"])){
+    function add_last_nav_item($items) {
+        return $items .= '<a class="btn" href="http://localhost/studom/login/">Prijava</a>
+                            <a class="btn" href="http://localhost/studom/registracija/">Registracija</a>';
+    }
+    add_filter('wp_nav_menu_items','add_last_nav_item');
+} */
+
 
 function initialize_my_sidebars(){
     register_sidebar(array(
@@ -129,7 +138,8 @@ function registriraj_studenta_cpt(){
             'editor',
             'thumbnail',
             'revisions'
-        ) ,
+        ),
+        'taxonomies' => array('godine_studija', 'studijski_program'),
         'hierarchical' => false,
         'public' => true,
         'show_ui' => true,
@@ -186,7 +196,8 @@ function registriraj_sobu_cpt(){
             'editor',
             'thumbnail',
             'revisions'
-        ) ,
+        ),
+        'taxonomies' => array('kat'),
         'hierarchical' => false,
         'public' => true,
         'show_ui' => true,
@@ -214,8 +225,8 @@ function registriraj_osoblje_cpt(){
         'attributes' => __('Atributi', 'studom_vt') ,
         'parent_item_colon' => __('Roditeljski element', 'studom_vt') ,
         'all_items' => __('Svo Osoblje', 'studom_vt') ,
-        'add_new_item' => __('Dodaj novi član Osoblja', 'studom_vt') ,
-        'add_new' => __('Dodaj novi', 'studom_vt') ,
+        'add_new_item' => __('Dodaj novog člana osoblja', 'studom_vt') ,
+        'add_new' => __('Dodaj novog člana osoblja', 'studom_vt') ,
         'new_item' => __('Novi član Osoblja', 'studom_vt') ,
         'edit_item' => __('Uredi Osoblje', 'studom_vt') ,
         'update_item' => __('Ažuriraj Osoblje', 'studom_vt') ,
@@ -243,7 +254,8 @@ function registriraj_osoblje_cpt(){
             'editor',
             'thumbnail',
             'revisions'
-        ) ,
+        ),
+        'taxonomiew' => array('mjesto_rada'),
         'hierarchical' => false,
         'public' => true,
         'show_ui' => true,
@@ -300,7 +312,7 @@ function registriraj_dodatni_sadrzaj_cpt(){
             'editor',
             'thumbnail',
             'revisions'
-        ) ,
+        ),
         'hierarchical' => false,
         'public' => true,
         'show_ui' => true,
@@ -449,7 +461,6 @@ function html_meta_box_student_osobni_podaci($post){
                             <td><!--MJESTO PREBIVALISTA--> <label for="email_studenta">E-mail: </label>  </td>
                             <td><input type="email" id="email_studenta" name="email_studenta" value="' . $email . '" /> </td>
                         </tr>
-
                         <input type="hidden" type="text" id="student_zaporka" name="student_zaporka" value="' . $student_zaporka . '" />
                 </table>
         </div>';
@@ -545,7 +556,15 @@ function html_meta_box_soba_student($post){
     $soba_student = get_post_meta($post->ID, 'soba_student', true);
     $sobaOdStudenta = explode(",", $soba_student);
 
-    $lSobe = DajListuSoba();
+    $lSobe = array();
+
+    $args = array(
+        'posts_per_page' => - 1,
+        'post_type' => 'soba',
+        'post_status' => 'publish',
+    );
+
+    $lSobe = get_posts($args);
 
     $sHtml = "";
 
@@ -554,21 +573,21 @@ function html_meta_box_soba_student($post){
 
     foreach ($lSobe as $soba)
     {
-        $bedString = $soba->get_broj_kreveta();
-        $typeString = $soba->get_tip_sobe();
-        $naslovString = $soba->get_naslov();
+        $bedString = $soba->tip_sobe;
+        $typeString = $soba->tip_kupaonice;
+        $naslovString = $soba->post_title;
 
         $titleString = $naslovString . ", " . $typeString . ", " . $bedString;
 
         $sSelected = "";
         foreach ($sobaOdStudenta as $sobaKey => $sobaValue)
         {
-            if ($sobaValue == $soba->get_soba_post_id())
+            if ($sobaValue == $soba->ID)
             {
                 $sSelected = 'selected="selected"';
             }
         }
-        $sHtml .= '<option ' . $sSelected . ' value="' . $soba->get_soba_post_id() . '">' . $titleString . '</option>';
+        $sHtml .= '<option ' . $sSelected . ' value="' . $soba->ID . '">' . $titleString . '</option>';
     }
 
     echo ' <div>
@@ -602,53 +621,192 @@ function spremi_sobu_studenta($post_id){
     
 }
 
-//---------------------------------------------------------------------------
-//SOBE TAKSONOMIJE I META BOXES
-//---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-//OSOBLJE TAKSONOMIJE I META BOXES
+//REGISTRACIJA STUDENTA
 //---------------------------------------------------------------------------
-
 
 
 if(isset($_POST['registerEmail'])){
 
-    $ime = $_POST['registerIme'];
-    $prezime = $_POST['registerPrezime'];
-    $ime_prezime = $ime . ' ' . $prezime;
+    $exists = false;
+    $poruka = '';
+    $porukaEmail = '<p>Unijeli ste postojeci EMAIL</p>';
+    $porukaJmbag = '<p>Unijeli ste postojeci JMBAG</p>';
+    $porukaZaporka = '<p>Zaporka pre kratka</p>';
 
+    $registerIme = $_POST['registerIme'];
+    $registerPrezime = $_POST['registerPrezime'];
+    $registerEmail = $_POST['registerEmail'];
+    $registerBrojMobitela = $_POST['registerBrojMobitela'];
+    $registerZaporka = $_POST['registerZaporka'];
+    $registerDatumRod = $_POST['registerDatumRođenja'];
+    $registerGrad = $_POST['registerGrad'];
+    $registerAdresa = $_POST['registerAdresa'];
+    $registerJmbag = $_POST['registerJMBAG'];
+    $registerProgram = $_POST['registerProgram'];
+    $registerGodina = $_POST['registerGodina'];
+    $registerProsjek = $_POST['registerProsjek'];
+    $registerECTS = $_POST['registerECTS'];
 
-    $novi_student = array(
-        'post_author' => $current_user->ID, 
+    $args = array(
+        'posts_per_page' => - 1,
         'post_type' => 'student',
-        'post_title' => $ime_prezime,
-        'post_content' => 'opis novog studenta',
         'post_status' => 'publish',
-        'tax_input' => array( 
-            'godine_studija' => '1'
-        ),
-        'meta_input' => array(
-                'ime_studenta'   => $ime,
-                'prezime_studenta' => $prezime
-        )
     );
 
-    wp_insert_post($novi_student);
-
-
     $studenti = get_posts($args);
+    
+    foreach($studenti as $student){
+        if($student->email_studenta == $registerEmail && $student->jmbag == $registerJmbag){
+            $exists = true;
+        }
+    }
 
-    $student = $studenti[0];
+    if($exists){
 
-    var_dump($student);
+    }else{
+        $ime_prezime = $registerIme . ' ' . $registerPrezime;
+        $novi_student = array(
+            'post_author' => $current_user->ID, 
+            'post_type' => 'student',
+            'post_title' => $ime_prezime,
+            'post_content' => 'opis novog studenta',
+            'post_status' => 'publish',
+            'tax_input' => array( 
+                'godine_studija' => '1'
+            ),
+            'meta_input' => array(
+                    'ime_studenta'   => $registerIme,
+                    'prezime_studenta' => $registerPrezime,
+                    'datum_rodenja_studenta' => $registerDatumRod,
+                    'adresa_studenta' => $registerAdresa,
+                    'grad_studenta' => $registerGrad,
+                    'broj_mobitela_studenta' => $registerBrojMobitela,
+                    'email_studenta' => $registerEmail,
+                    'student_zaporka' => $registerZaporka,
+                    'ects_bodovi' => $registerECTS,
+                    'prosjek_ocjena' => $registerProsjek,
+                    'jmbag' => $registerJmbag
+            )
+        );
 
-    $termObj  = get_term_by( 'id', '1', 'godine_studija');
-    wp_set_object_terms($student->ID, $termObj, $taxonomy);
+        wp_insert_post($novi_student);
 
+
+        $studenti = get_posts($args);
+
+        $student = $studenti[0];
+
+        header('location: http://localhost/studom/login/');
+
+        $termObj  = get_term_by( 'id', '1', 'godine_studija');
+        wp_set_object_terms($student->ID, $termObj, $taxonomy);
+    }
+    
+    
+
+    
     die;
 }
+//---------------------------------------------------------------------------
+//LOGIN STUDENT/OSOBLJE
+//---------------------------------------------------------------------------
+if (isset($_POST["loginEmail"]) && isset($_POST["loginZaporka"])){
 
+$poruka = '';
+$passStatus = 0;
+$userStatus = 0;
+
+$args = array(
+    'posts_per_page' => - 1,
+    'post_type' => 'student',
+    'post_status' => 'publish',
+);
+
+$lStudenti = get_posts($args);
+
+$args = array(
+    'posts_per_page' => - 1,
+    'post_type' => 'osoblje',
+    'post_status' => 'publish'
+);
+
+$lOsoblje = get_posts($args);
+
+$zaporka='';
+
+    if (empty($_POST["loginEmail"]) || empty($_POST["loginZaporka"]))
+    {
+        $poruka = "Morate popuniti oba polja";
+        echo "<script type='text/javascript'>alert('$poruka');</script>";
+    }else
+    {
+        foreach($lStudenti as $student){
+            if ($_POST["loginEmail"] == $student->email_studenta)
+            {
+                $userStatus = 1;
+            }
+
+            if(strlen($student->student_zaporka)>2){
+                $zaporka=$student->student_zaporka;
+            }
+
+            if ($_POST["loginZaporka"] == $student->student_zaporka)
+            {
+                $passStatus = 1;
+            }
+            if ($userStatus == 1 && $passStatus == 1)
+            {
+                if($passStatus==1){
+                    $_SESSION['osoba'] = $student->ID;
+                    ini_set('session.gc_maxlifetime', 60*60);
+                    header('location: http://localhost/studom/profil/');
+                    $passStatus = 0;
+                    $userStatus = 0;
+                break;
+                }
+            }
+        }
+        /* foreach($lOsoblje as $clan){
+            if ($_POST["loginEmail"] == $clan->get_email())
+            {
+                $userStatus = 1;
+            }
+            if ($_POST["loginZaporka"] == $clan->student_zaporka)
+            {
+                $passStatus = 1;
+            }
+            if ($userStatus == 1)
+            {
+                if($passStatus==1){
+                    setcookie("osoba", $clan->ID, time() + 3600);
+                    ini_set('session.gc_maxlifetime', 60*60);
+                    header('location:http://localhost/studom/profil/');
+                    $passStatus = 0;
+                    $userStatus = 0;
+                break;
+                }
+            }
+        } */
+        if ($userStatus == 0)
+        {
+            $poruka = "Pogrešan email";
+            echo "<script type='text/javascript'>alert('$poruka');</script>";
+        }
+        if ($passStatus == 0)
+        {
+            $poruka = "Pogrešna zaporka";
+            echo "<script type='text/javascript'>alert('$poruka');</script>";
+        }
+        if ($passStatus == 0 && $userStatus == 0)
+        {
+            $poruka = "Pogrešni podaci";
+            echo "<script type='text/javascript'>alert('$poruka');</script>";
+        }
+    }
+    die;
+}
 
 
 
@@ -705,25 +863,20 @@ function html_meta_box_hidden_zauzece($post)
 {
     $sHtml = '';
 
+    $args = array(
+        'posts_per_page' => - 1,
+        'post_type' => 'student',
+        'post_status' => 'publish',
+    );
+
+    $studenti = get_posts($args);
+
     $hasStudents = false;
-
-    $lStudenti = DajListuStudenata();
     $lMyStudents = array();
-    $lSoba = DajListuSoba();
 
-    $thisSoba = new oSoba();
-
-    foreach ($lSoba as $soba)
+    foreach ($studenti as $student)
     {
-        if ($soba->get_soba_post_id() == $post->ID)
-        {
-            $thisSoba = $soba;
-        }
-    }
-
-    foreach ($lStudenti as $student)
-    {
-        if ($student->get_student_soba() == $thisSoba->get_soba_post_id())
+        if ($student->soba_student == $post->ID)
         {
             array_push($lMyStudents, $student);
             $hasStudents = true;
@@ -735,8 +888,8 @@ function html_meta_box_hidden_zauzece($post)
         $rbr = 1;
         foreach ($lMyStudents as $student)
         {
-            $id = $student->get_student_post_id();
-            $sHtml .= '<h4> Student ' . $rbr . ' : <a href="http://localhost/wpstudom/wp-admin/post.php?post=' . $id . '&action=edit"> ' . $student->get_ime_prezime() . '</a> </h4>';
+            $id = $student->ID;
+            $sHtml .= '<h4> Student ' . $rbr . ' : <a href="http://localhost/studom/wp-admin/post.php?post=' . $id . '&action=edit"> ' . $student->post_title . '</a> </h4>';
             $rbr++;
         }
     }
@@ -1144,12 +1297,20 @@ function DajOsoblje($slug)
 
 function DajStudenteSaSobama()
 {
-    $lSviStudenti = DajListuStudenata();
     $lStudentiSaSobama = array();
 
-    foreach ($lSviStudenti as $student)
+    $args = array(
+        'posts_per_page' => - 1,
+        'post_type' => 'student',
+        'post_status' => 'publish',
+    );
+
+    $studenti = get_posts($args);
+
+
+    foreach ($studenti as $student)
     {
-        if ($student->get_student_soba() != 0 && $student->get_student_soba() != null)
+        if ($student->soba_student != 0 && $student->soba_student != null)
         {
             array_push($lStudentiSaSobama, $student);
         }
@@ -1158,58 +1319,6 @@ function DajStudenteSaSobama()
     return $lStudentiSaSobama;
 }
 
-function DajStudentaPoId($id)
-{
-    $lSviStudenti = DajListuStudenata();
-
-    $sHtml = '';
-
-    foreach ($lSviStudenti as $student)
-    {
-        $sId = $student->get_student_post_id();
-        if ($sId == $id)
-        {
-
-            $sHtml .= '<div class="col-md-6">
-                            <div class="section-header left">
-                                <p>Student</p>
-                                <table class="table table-bordered">
-                                <thead>
-                                        <tr>
-                                            <th>Godina</th>
-                                            <th>Program</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>' . $student->get_godina() . '</td>
-                                            <td>' . $student->get_program() . '</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="team-item">
-                                <div class="team-img">
-                                    <img src="' . $student->get_slika_url() . '" alt="">
-                                </div>
-                                <div class="team-text">
-                                    <h3>' . $student->get_ime_prezime() . '</h3>
-                                    <p></p>
-                                    <p>Grad: ' . $student->get_grad() . '</p>
-                                    <div class="team-social">
-                                        <a class="social-tw" href=""><i class="fab fa-twitter"></i></a>
-                                        <a class="social-fb" href=""><i class="fab fa-facebook-f"></i></a>
-                                        <a class="social-li" href=""><i class="fab fa-linkedin-in"></i></a>
-                                        <a class="social-in" href=""><i class="fab fa-instagram"></i></a>
-                                    </div>
-                                </div>
-                            </div></div></div>';
-        }
-    }
-    return $sHtml;
-}
 
 function DajSobePoKatu($slug)
 {
@@ -1326,7 +1435,6 @@ function ProvjeriKapacitetSobe($soba){
 
     $lStudenti = get_posts($args);
 
-
     $status = 0;
     foreach($lStudenti as $student){
         $studentSoba = get_post_meta($student->ID, 'soba_student', true);
@@ -1339,21 +1447,31 @@ function ProvjeriKapacitetSobe($soba){
 
 function DajBrojSobePoId($id)
 {
-    $lSobe = DajListuSoba();
-    foreach ($lSobe as $soba)
+    $args = array(
+        'posts_per_page' => - 1,
+        'post_type' => 'soba',
+        'post_status' => 'publish',
+    );
+    $sobe = get_posts($args);
+    foreach ($sobe as $soba)
     {
-        if ($soba->get_soba_post_id() == $id)
+        if ($soba->ID == $id)
         {
-            return $soba->get_naslov();
+            return $soba->post_title;
         }
     }
 }
 function DajSobuPoId($id)
 {
-    $lSobe = DajListuSoba();
-    foreach ($lSobe as $soba)
+    $args = array(
+        'posts_per_page' => - 1,
+        'post_type' => 'soba',
+        'post_status' => 'publish',
+    );
+    $sobe = get_posts($args);
+    foreach ($sobe as $soba)
     {
-        if ($soba->get_soba_post_id() == $id)
+        if ($soba->ID == $id)
         {
             return $soba;
         }

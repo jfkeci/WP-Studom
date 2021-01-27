@@ -2,84 +2,98 @@
 /*
 Template Name: Login
 */
+session_start();
 
-if (isset($_COOKIE["osoba"]))
-{
-    //
-}
 
-$poruka = '';
-$passStatus = 0;
-$userStatus = 0;
-
-$lStudenti = DajListuStudenata();
-//$lOsoblje = DajListuOsoblja();
-
-if (isset($_POST["login"]))
-{
-    if (empty($_POST["user_email"]) || empty($_POST["user_password"]))
-    {
-        $poruka = "<div class='alert alert-danger'>Morate popuniti oba polja</div>";
-    }else
-    {
-        foreach($lStudenti as $student){
-            if ($_POST["user_email"] == $student->get_email())
-            {
-                $userStatus = 1;
-            }
-            if ($_POST["user_password"] == $student->get_student_zaporka())
-            {
-                $passStatus = 1;
-            }
-            if ($userStatus == 1)
-            {
-                if($passStatus==1){
-                    SetMyCookie($student->get_student_post_id());
-                    $passStatus = 0;
-                    $userStatus = 0;
-                break;
-                }
-            }
-        }
-        /* foreach($lOsoblje as $clan){
-            if ($_POST["user_email"] == $clan->get_email())
-            {
-                $userStatus = 1;
-            }
-            if ($_POST["user_password"] == $clan->get_student_zaporka())
-            {
-                $passStatus = 1;
-            }
-            if ($userStatus == 1)
-            {
-                if($passStatus==1){
-                    setcookie("osoba", $clan->get_student_post_id(), time() + 3600);
-                    $passStatus = 0;
-                    $userStatus = 0;
-                break;
-                }
-            }
-        } */
-        if ($userStatus == 0)
-        {
-            $poruka = "<div class='alert alert-danger'>Pogrešno korisničko ime</div>";
-        }
-        if ($passStatus == 0)
-        {
-            $poruka = "<div class='alert alert-danger'>Pogrešna zaporka</div>";
-        }
-        if ($passStatus == 0 && $userStatus == 0)
-        {
-            $poruka = "<div class='alert alert-danger'>Pogrešni podaci</div>";
-        }
+if(!isset($_SESSION['osoba'])){
+    function add_last_nav_item($items) {
+        return $items .= '<a class="btn" href="http://localhost/studom/login/">Prijava</a>
+                            <a class="btn" href="http://localhost/studom/registracija/">Registracija</a>';
     }
+    add_filter('wp_nav_menu_items','add_last_nav_item');
+}if(isset($_SESSION['osoba']) && session_id() != ''){
+    function add_last_nav_item($items) {
+        return $items .= '<a class="btn" href="http://localhost/studom/profil/">Profil</a>';
+    }
+    add_filter('wp_nav_menu_items','add_last_nav_item');
+    header('location: http://localhost/studom/profil/');
 }
 
+wp_head();
 
-get_header();
 ?>
 
-<div class="contact">
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title><?php the_title(); ?></title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+        <?php
+
+        wp_head();
+        
+        ?>
+        
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="header home">
+                <div class="container-fluid">
+                    <div class="header-top row align-items-center">
+                        <div class="col-lg-3">
+                            <div class="brand">
+                            
+                            </div>
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="topbar">
+                                <div class="topbar-col">
+                                    <a href="tel:033 628 817"><i class="fa fa-phone-alt"></i>033 628 817</a>
+                                </div>
+                                <div class="topbar-col">
+                                    <a href="studom@vsmti.hr"><i class="fa fa-envelope"></i>studom@vsmti.hr</a>
+                                </div>
+                            </div>
+                            <div class="navbar navbar-expand-lg bg-light navbar-light">
+                                <a href="#" class="navbar-brand">MENU</a>
+                                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+									<div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                                	    <div class="navbar-nav ml-auto">
+											<?php
+												$menu_args=
+													array(
+                                                        'menu' => 'glavni-menu',
+                                                        'menu_id' => 'mainMenu',
+														'container' => false,
+														'echo' => false,
+														'items_wrap' => '%3$s',
+														'depth' => 0
+													);
+													echo strip_tags(wp_nav_menu( $menu_args ), '<a>' );
+											?>
+										</div>
+                                	</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="hero row align-items-center">
+                        <div class="col-md-7">
+                            <h2>Studentski dom</h2>
+                            <h2><span>Virovitica</span></h2>
+                            <p>Visoka škola za menadžment u turizmu  informatici</p>
+                            <a class="btn" href="http://localhost/studom">STUDOM</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="contact">
                 <div class="container">
                     <div class="section-header">
                         <h2>Prijava</h2>
@@ -98,19 +112,23 @@ get_header();
                             <div>
                                 <p>Telefon: 033 628 817</p>
 							    <p>Mail: studom@vsmti.hr</p>
+							    <p> <?php echo $zaporka;  ?> </p>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="contact-form">
-                                <form>
+                                <div>
+                                <?php echo $poruka; ?>
+                                </div>
+                                <form method="post">
                                     <div class="form-group">
-                                    <label for="registerEmail">Email</label>
-                    	                <input id="registerEmail" type="email" class="form-control" placeholder="Email" required="required" />
+                                    <label for="loginEmail">Email</label>
+                    	                <input id="loginEmail" type="email" class="form-control" placeholder="Email" required="required" />
                     	            </div>
 									<div class="form-group">
                     	            <div class="form-group">
-                                    <label for="registerZaporka">Zaporka</label>
-                    	                <input  id="registerZaporka" type="password"class="form-control" rows="6" placeholder="Zaporka" required="required" ></input>
+                                    <label for="loginZaporka">Zaporka</label>
+                    	                <input  id="loginZaporka" type="password"class="form-control" rows="6" placeholder="Zaporka" required="required" ></input>
                     	            </div>
                                     <div><button class="btn" type="submit">Prijava</button></div>
                                 </form>

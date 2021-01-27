@@ -1,3 +1,20 @@
+<?php
+session_start();
+
+if(!isset($_SESSION['osoba'])){
+    function add_last_nav_item($items) {
+        return $items .= '<a class="btn" href="http://localhost/studom/login/">Prijava</a>
+                            <a class="btn" href="http://localhost/studom/registracija/">Registracija</a>';
+    }
+    add_filter('wp_nav_menu_items','add_last_nav_item');
+}if(isset($_SESSION['osoba']) && session_id() != ''){
+    function add_last_nav_item($items) {
+        return $items .= '<a class="btn" href="http://localhost/studom/profil/">Profil</a>';
+    }
+    add_filter('wp_nav_menu_items','add_last_nav_item');
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -7,9 +24,11 @@
         <meta content="Cleaning Company Website Template" name="keywords">
         <meta content="Cleaning Company Website Template" name="description">
 
-        <?php the_custom_logo(); ?>
-
-		<?php wp_head(); ?>
+        <?php 
+        
+        wp_head(); 
+        
+        ?>
 
     </head>
 
@@ -62,7 +81,7 @@
                             <h2><span>Virovitica</span></h2>
                             <p>Visoka škola za menadžment u turizmu  informatici</p>
                             <a class="btn" href="http://localhost/studom">STUDOM</a>
-							<p>Obavijesti</p>
+							<p>Novosti</p>
                         </div>
                     </div>
                 </div>
@@ -73,7 +92,7 @@
                     <div class="row">
                         <div class="col-md-5">
                             <div class="section-header left">
-                                <p>Obavijesti</p>
+                                <p>Novosti</p>
                                 <h2>Budite u toku</h2>
                             </div>
                             <p>

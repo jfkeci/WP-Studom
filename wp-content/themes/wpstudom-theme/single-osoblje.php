@@ -1,3 +1,20 @@
+<?php
+session_start();
+
+if(!isset($_SESSION['osoba'])){
+    function add_last_nav_item($items) {
+        return $items .= '<a class="btn" href="http://localhost/studom/login/">Prijava</a>
+                            <a class="btn" href="http://localhost/studom/registracija/">Registracija</a>';
+    }
+    add_filter('wp_nav_menu_items','add_last_nav_item');
+}if(isset($_SESSION['osoba']) && session_id() != ''){
+    function add_last_nav_item($items) {
+        return $items .= '<a class="btn" href="http://localhost/studom/profil/">Profil</a>';
+    }
+    add_filter('wp_nav_menu_items','add_last_nav_item');
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -7,9 +24,11 @@
         <meta content="Cleaning Company Website Template" name="keywords">
         <meta content="Cleaning Company Website Template" name="description">
 
-        <?php the_custom_logo(); ?>
-
-		<?php wp_head(); ?>
+        <?php 
+        
+        wp_head(); 
+        
+        ?>
 
     </head>
 
@@ -62,18 +81,82 @@
                             <h2><span>Virovitica</span></h2>
                             <p>Visoka škola za menadžment u turizmu  informatici</p>
                             <a class="btn" href="http://localhost/studom">STUDOM</a>
-							<p>Osoblje</p>
+							<p>Član osoblja</p>
                         </div>
                     </div>
                 </div>
             </div>
+                    
+			<div class="team">
+                <div class="container">
+                    <div class="row">
+								<?php
+										if (have_posts())
+										{
+											while ( have_posts())
+											{	
+												$mjestoRada = '';
+												$sThumbnailOsoblje = '';
+												the_post();
 
+												$sHtml = '';
+												
+												$lMjestoRada = wp_get_post_terms($post->ID, 'mjesto_rada');
+        										foreach ($lMjestoRada as $mjesto)
+        										{
+        										    $mjestoRada = $mjesto->name;
+                                                }
+                                                
+        										if (get_the_post_thumbnail_url($post->ID))
+        										{
+        										    $sThumbnailOsoblje = get_the_post_thumbnail_url($post->ID);
+        										}
+        										else
+        										{
+        										    $sThumbnailOsoblje = get_template_directory_uri() . '/images/profile.png';
+        										}
+													
+    											$sHtml .= '<div class="col-md-6">
+    											                <div class="section-header left">
+    											                    <p>Student</p>
+    											                    <table class="table table-bordered">
+    											                    <thead>
+    											                            <tr>
+    											                                <th>Godina</th>
+    											                                <th>Kat dežurstva</th>
+    											                            </tr>
+    											                        </thead>
+    											                        <tbody>
+    											                            <tr>
+    											                                <td>' . $mjestoRada . '</td>
+    											                                <td>' . $post->kat_dezurstva . '</td>
+                                                                            </tr>
+    											                        </tbody>
+    											                    </table>
+    											                </div>
+    											            </div>
+    											            <div class="col-lg-3 col-md-6">
+    											                <div class="team-item">
+    											                    <div class="team-img">
+    											                        <img src="' . $sThumbnailOsoblje.'" alt="">
+    											                    </div>
+    											                    <div class="team-text">
+    											                        <h3>' . $post->post_title . '</h3>
+    											                        <p></p>
+    											                        <p>Grad: ' . $post->grad_osoblja . '</p>
+    											                    </div>
+																</div>
+																</div>
+																</div>';
 
-			<?php
-			
-			
-			
-			?>
+    											echo $sHtml;
+											}
+										}
+								?> 
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
 

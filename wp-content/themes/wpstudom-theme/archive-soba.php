@@ -1,4 +1,20 @@
+<?php
+session_start();
 
+if(!isset($_SESSION['osoba'])){
+    function add_last_nav_item($items) {
+        return $items .= '<a class="btn" href="http://localhost/studom/login/">Prijava</a>
+                            <a class="btn" href="http://localhost/studom/registracija/">Registracija</a>';
+    }
+    add_filter('wp_nav_menu_items','add_last_nav_item');
+}if(isset($_SESSION['osoba']) && session_id() != ''){
+    function add_last_nav_item($items) {
+        return $items .= '<a class="btn" href="http://localhost/studom/profil/">Profil</a>';
+    }
+    add_filter('wp_nav_menu_items','add_last_nav_item');
+}
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,8 +23,10 @@
         <title><?php the_title(); ?></title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <?php 
-            wp_head();
-         ?>
+        
+        wp_head(); 
+        
+        ?>
     </head>
     <body>
         <div class="wrapper">
@@ -141,7 +159,7 @@
                                                         <img src="'.$sImageUrl.'" alt="">
                                                         <a href="' . $sImageUrl . '" class="link-preview" data-lightbox="portfolio"><i class="fa fa-eye"></i></a>
                                                         <a href="' . $soba->guid . '" class="link-details"><i class="fa fa-link"></i></a>
-                                                        <a style="'.$colorString.';" class="portfolio-title" href' . $soba->guid . '">' . $soba->broj_sobe . ' - ' . $sKatSobe . '</a>
+                                                        <a style="'.$colorString.';" class="portfolio-title" href' . $soba->guid . '">' . $soba->post_title . ' - ' . $sKatSobe . '</a>
                                                         <p>Tip sobe: ' . $soba->tip_kupaonice . '</p>
                                                         <p>Broj kreveta ' . $soba->tip_sobe . '</p>
                                                     </figure>
